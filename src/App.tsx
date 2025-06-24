@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import AuthButton from "./Components/AuthButton";
 import DatabaseTest from "./Components/DatabaseTest";
 import { auth } from "./lib/firebase";
-import MealPlanCard from "./Components/MealPlanCard";
+import MealPlanCard from "./Components/MealCard/MealPlanCard";
+import { DocumentCard } from "@fluentui/react";
 
 function App() {
   const [user, setUser] = useState(() => auth.currentUser);
@@ -63,8 +64,13 @@ function App() {
     <div style={{ padding: "2rem" }}>
       <h1>Jemily Meal Planner</h1>
       <AuthButton />
-      <MealPlanCard title="Evening Meals" meals={eveningMeals} />
-      <MealPlanCard title="Lunches" meals={lunches} />
+
+      <h3>This week's meals</h3>
+      <div style={{ marginTop: "2rem", display: "flex", gap: "2rem" }}>
+        <DocumentCard />
+        <MealPlanCard title="Evening Meals" meals={eveningMeals} />
+        <MealPlanCard title="Lunches" meals={lunches} />
+      </div>
 
       {user && <DatabaseTest />}
     </div>
