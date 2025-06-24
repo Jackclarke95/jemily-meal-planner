@@ -60,8 +60,10 @@ function App() {
     },
   ];
 
+  console.log("User:", user);
+
   if (!user) {
-    <AuthButton />;
+    return <AuthButton />;
   }
 
   return (
