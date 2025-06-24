@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { MealType } from "../../Types/Meal";
-import { VscChecklist } from "react-icons/vsc";
 
 type MealProps = {
   meal: MealType;

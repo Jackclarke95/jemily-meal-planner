@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ref, set, onValue, push } from "firebase/database";
+import { ref, onValue, push } from "firebase/database";
 import { db } from "../lib/firebase";
 
 export default function DatabaseTest() {
