@@ -60,14 +60,16 @@ function App() {
     },
   ];
 
+  if (!user) {
+    <AuthButton />;
+  }
+
   return (
     <div style={{ padding: "2rem" }}>
       <h1>Jemily Meal Planner</h1>
       <AuthButton />
-
       <h3>This week's meals</h3>
       <div style={{ marginTop: "2rem", display: "flex", gap: "2rem" }}>
-        <DocumentCard />
         <MealPlanCard title="Evening Meals" meals={eveningMeals} />
         <MealPlanCard title="Lunches" meals={lunches} />
       </div>
