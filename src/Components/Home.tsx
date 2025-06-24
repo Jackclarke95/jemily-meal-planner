@@ -1,21 +1,14 @@
-import { useEffect, useMemo, useState } from "react";
-import { auth, db } from "./lib/firebase";
-import Home from "./Components/Home";
-import Login from "./Components/Login";
+import { Stack } from "@fluentui/react";
+import DatabaseTest from "./DatabaseTest";
+import MealPlanCard from "./MealCard/MealPlanCard";
+import { User } from "firebase/auth";
+import SignOutButton from "./SignOutButton";
 
-const App = () => {
-  const [user, setUser] = useState(() => auth.currentUser);
+interface HomeProps {
+  user: User;
+}
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(setUser);
-
-    return unsubscribe;
-  }, []);
-
-  if (!user) {
-    return <Login />;
-  }
-
+const Home: React.FC<HomeProps> = (props) => {
   const eveningMeals = [
     {
       name: "Spaghetti Bolognese",
@@ -62,7 +55,18 @@ const App = () => {
     },
   ];
 
-  return <Home user={user} />;
+  return (
+    <div style={{ padding: "2rem" }}>
+      <h1>Jemily Meal Planner</h1>
+      <SignOutButton />
+      <h3>This week's meals</h3>
+      <Stack horizontal style={{ gap: "2rem" }}>
+        <MealPlanCard title="Evening Meals" meals={eveningMeals} />
+        <MealPlanCard title="Lunches" meals={lunches} />
+      </Stack>
+      <DatabaseTest />
+    </div>
+  );
 };
 
-export default App;
+export default Home;

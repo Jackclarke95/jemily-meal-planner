@@ -3,22 +3,17 @@ import { MealType } from "../../Types/Meal";
 import Meal from "./Meal";
 import { collateIngredients } from "../../utils/collateIngredients";
 import ShoppingList from "../ShoppingList";
+import { getTheme } from "@fluentui/react";
+import { DAYS_OF_WEEK } from "../../lib/globalConsts";
 
 type MealPlanCardProps = {
   title: string;
-  meals: MealType[]; // Should be length 7
+  meals: MealType[];
 };
 
 export default function MealPlanCard({ title, meals }: MealPlanCardProps) {
-  const days = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
+  const theme = getTheme();
+
   const [collapsed, setCollapsed] = useState(false);
   const [showShoppingList, setShowShoppingList] = useState(false);
 
@@ -31,6 +26,10 @@ export default function MealPlanCard({ title, meals }: MealPlanCardProps) {
   };
 
   const ingredientCounts = collateIngredients(meals);
+
+  return (
+    <div style={{ boxShadow: theme.effects.elevation8, width: "100%" }}></div>
+  );
 
   return (
     <div
@@ -57,7 +56,7 @@ export default function MealPlanCard({ title, meals }: MealPlanCardProps) {
         <>
           <ul style={{ listStyle: "none", padding: 0 }}>
             {meals.map((meal, index) => (
-              <Meal meal={meal} day={days[index]} key={index} />
+              <Meal meal={meal} day={DAYS_OF_WEEK[index]} key={index} />
             ))}
           </ul>
 
