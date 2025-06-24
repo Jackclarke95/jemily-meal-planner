@@ -1,68 +1,67 @@
 import { useEffect, useState } from "react";
 import { auth } from "./lib/firebase";
-import Home from "./Components/Home";
+import Home from "./Components/Pages/Home";
 import Login from "./Components/Login";
+import { Stack, Text, IconButton } from "@fluentui/react";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouteObject,
+  RouterProvider,
+} from "react-router";
+import { useNavigate, useLocation } from "react-router-dom";
+import SignOutButton from "./Components/SignOutButton";
+import AddMeal from "./Components/Pages/AddMeal";
 
 const App = () => {
   const [user, setUser] = useState(() => auth.currentUser);
 
+  // Set user when auth state changes
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(setUser);
 
     return unsubscribe;
-  }, []);
+  }, [auth]);
 
   if (!user) {
     return <Login />;
   }
 
-  // const eveningMeals = [
-  //   {
-  //     name: "Spaghetti Bolognese",
-  //     ingredients: [
-  //       { name: "Spaghetti", quantity: 200, unit: "grams" },
-  //       { name: "Beef mince", quantity: 500, unit: "grams" },
-  //       { name: "Tomato sauce", quantity: 1, unit: "can" },
-  //       { name: "Onion", quantity: 1, unit: "individual" },
-  //       { name: "Garlic", quantity: 3, unit: "cloves" },
-  //     ],
-  //   },
-  //   {
-  //     name: "Chicken Stir Fry",
-  //     ingredients: [
-  //       { name: "Chicken breast", quantity: 2, unit: "individual" },
-  //       { name: "Mixed vegetables", quantity: 300, unit: "grams" },
-  //       { name: "Soy sauce", quantity: 50, unit: "ml" },
-  //       { name: "Rice", quantity: 200, unit: "grams" },
-  //       { name: "Onion", quantity: 1, unit: "individual" },
-  //     ],
-  //   },
-  // ];
+  const routes: RouteObject[] = [
+    {
+      path: "/",
+      element: <Home user={user} />,
+    },
+    { path: "/add-meal", element: <AddMeal /> },
+  ];
 
-  // const lunches = [
-  //   {
-  //     name: "Spaghetti Bolognese",
-  //     ingredients: [
-  //       { name: "Spaghetti", quantity: 200, unit: "grams" },
-  //       { name: "Beef mince", quantity: 500, unit: "grams" },
-  //       { name: "Tomato sauce", quantity: 1, unit: "can" },
-  //       { name: "Onion", quantity: 200, unit: "grams" },
-  //       { name: "Garlic", quantity: 3, unit: "cloves" },
-  //     ],
-  //   },
-  //   {
-  //     name: "Chicken Stir Fry",
-  //     ingredients: [
-  //       { name: "Chicken breast", quantity: 2, unit: "individual" },
-  //       { name: "Mixed vegetables", quantity: 300, unit: "grams" },
-  //       { name: "Soy sauce", quantity: 50, unit: "ml" },
-  //       { name: "Rice", quantity: 200, unit: "grams" },
-  //       { name: "Onion", quantity: 1, unit: "individual" },
-  //     ],
-  //   },
-  // ];
+  const router = createBrowserRouter(routes);
 
-  return <Home user={user} />;
+  // Custom header with back button
+  const Header = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const showBack = location.pathname !== "/";
+
+    return (
+      <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
+        <Stack horizontal verticalAlign="center">
+          {showBack && (
+            <IconButton
+              iconProps={{ iconName: "Back" }}
+              title="Back to Home"
+              ariaLabel="Back to Home"
+              onClick={() => navigate("/")}
+              styles={{ root: { marginRight: 8 } }}
+            />
+          )}
+        </Stack>
+        <SignOutButton />
+      </Stack>
+    );
+  };
+
+  return <RouterProvider router={router} />;
 };
 
 export default App;

@@ -8,7 +8,8 @@ import { MealType } from "../Types/Meal";
 export function collateIngredients(meals: MealType[]): {
   [ingredient: string]: { [unit: string]: number };
 } {
-  const ingredientMap: { [ingredient: string]: { [unit: string]: number } } = {};
+  const ingredientMap: { [ingredient: string]: { [unit: string]: number } } =
+    {};
 
   meals.forEach((meal) => {
     meal.ingredients.forEach((ingredient: Ingredient) => {
@@ -20,9 +21,9 @@ export function collateIngredients(meals: MealType[]): {
       }
 
       if (ingredientMap[nameKey][unitKey]) {
-        ingredientMap[nameKey][unitKey] += ingredient.quantity;
+        ingredientMap[nameKey][unitKey] += Number(ingredient.quantity);
       } else {
-        ingredientMap[nameKey][unitKey] = ingredient.quantity;
+        ingredientMap[nameKey][unitKey] += Number(ingredient.quantity);
       }
     });
   });
