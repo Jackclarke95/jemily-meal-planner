@@ -32,7 +32,7 @@ const Page: React.FC<PageProps> = (props) => {
           onClick={() => navigate(props.path || "/")}
           styles={{ root: { marginRight: 8 } }}
         />
-        <Text variant="xLargePlus">Jemily Meal Planner</Text>
+        <Text variant="xLargePlus">{props.title}</Text>
         <SignOutButton />
       </Stack>
 

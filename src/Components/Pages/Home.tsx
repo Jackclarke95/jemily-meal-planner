@@ -1,5 +1,4 @@
 import { Stack, Text } from "@fluentui/react";
-import MealPlanCard from "../MealCard/MealPlanCard";
 import { User } from "firebase/auth";
 import NavCard from "../NavCard";
 import { MealType } from "../../Types/Meal";
@@ -57,17 +56,19 @@ const Home: React.FC<HomePageProps> = (props) => {
   ];
 
   return (
-    <Page title="Home">
+    <Page title="Meal Planner">
       <Stack tokens={{ childrenGap: 20 }}>
-        <Text variant="large">This week's meals</Text>
         <Stack horizontal style={{ gap: "2rem" }}>
           <NavCard
             title="Add Meal"
             description="Create a new meal"
             path={"/add-meal"}
           />
-          <MealPlanCard title="Evening Meals" meals={eveningMeals} />
-          <MealPlanCard title="Lunches" meals={lunches} />
+          <NavCard
+            title="View Meals"
+            description="Browse existing meals"
+            path={"/meals"}
+          />
         </Stack>
       </Stack>
     </Page>

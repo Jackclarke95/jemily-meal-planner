@@ -1,9 +1,10 @@
-import { Stack, Text, TextField, PrimaryButton } from "@fluentui/react";
 import { useEffect, useState, useCallback } from "react";
-import { ref, push, set, update } from "firebase/database";
+import { useParams, useNavigate } from "react-router-dom";
+import { ref, get, update } from "firebase/database";
 import { db } from "../../lib/firebase";
-import EditIngredientDialog from "../EditIngredientDialog";
+import { Stack, Text, TextField, PrimaryButton } from "@fluentui/react";
 import IngredientList from "../IngredientList";
+import EditIngredientDialog from "../EditIngredientDialog";
 import MealSavedBar from "../MealSavedBar";
 import { INGREDIENT_UNIT_LOOKUP } from "../../lib/globalConsts";
 import Page from "../Page";
@@ -15,10 +16,15 @@ interface Ingredient {
   key?: string;
 }
 
-interface AddMealPageProps {}
+function normalizeUnit(unit: string): string {
+  const cleaned = unit.trim().toLowerCase();
+  return INGREDIENT_UNIT_LOOKUP[cleaned] || unit;
+}
 
-const AddMeal: React.FC<AddMealPageProps> = () => {
-  const [mealKey, setMealKey] = useState<string | null>(null);
+const EditMeal: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+
   const [mealTitle, setMealTitle] = useState("");
   const [mealDescription, setMealDescription] = useState("");
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
@@ -33,16 +39,25 @@ const AddMeal: React.FC<AddMealPageProps> = () => {
   const [editIngredient, setEditIngredient] = useState<Ingredient | null>(null);
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
-  // Meal saved state
+  // Meal saved bar state
   const [mealSaved, setMealSaved] = useState(false);
   const [progress, setProgress] = useState(1);
 
-  function normalizeUnit(unit: string): string {
-    const cleaned = unit.trim().toLowerCase();
-    return INGREDIENT_UNIT_LOOKUP[cleaned] || unit;
-  }
+  // Load meal data once on mount
+  useEffect(() => {
+    if (!id) return;
+    const mealRef = ref(db, `meals/${id}`);
+    get(mealRef).then((snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setMealTitle(data.title || "");
+        setMealDescription(data.description || "");
+        setIngredients(data.ingredients || []);
+      }
+    });
+  }, [id]);
 
-  // Helper to create or update the meal in Firebase
+  // Save meal to DB
   const saveMealToDb = useCallback(
     async (
       override?: Partial<{
@@ -51,28 +66,17 @@ const AddMeal: React.FC<AddMealPageProps> = () => {
         ingredients: Ingredient[];
       }>
     ) => {
-      let key = mealKey;
+      if (!id) return;
       const mealData = {
         title: override?.title ?? mealTitle,
         description: override?.description ?? mealDescription,
         ingredients: override?.ingredients ?? ingredients,
         updatedAt: new Date().toISOString(),
       };
-
-      if (!key) {
-        // Create new meal node
-        const mealRef = ref(db, "meals");
-        const newMealRef = push(mealRef);
-        key = newMealRef.key!;
-        setMealKey(key);
-        await set(newMealRef, mealData);
-      } else {
-        // Update existing meal node
-        const mealRef = ref(db, `meals/${key}`);
-        await update(mealRef, mealData);
-      }
+      const mealRef = ref(db, `meals/${id}`);
+      await update(mealRef, mealData);
     },
-    [mealKey, mealTitle, mealDescription, ingredients]
+    [id, mealTitle, mealDescription, ingredients]
   );
 
   // Add ingredient and save meal
@@ -86,6 +90,7 @@ const AddMeal: React.FC<AddMealPageProps> = () => {
     setIngredients(updatedIngredients);
     setNewIngredient({ name: "", quantity: "", unit: "" });
     await saveMealToDb({ ingredients: updatedIngredients });
+    showSavedBar();
   };
 
   // Edit handlers
@@ -111,6 +116,7 @@ const AddMeal: React.FC<AddMealPageProps> = () => {
       };
       setIngredients(updatedIngredients);
       await saveMealToDb({ ingredients: updatedIngredients });
+      showSavedBar();
     }
     closeEditDialog();
   };
@@ -118,13 +124,17 @@ const AddMeal: React.FC<AddMealPageProps> = () => {
   // Save meal handler (for Save Meal button)
   const saveMeal = async () => {
     await saveMealToDb();
+    showSavedBar();
+  };
+
+  // Show the saved bar with progress
+  const showSavedBar = () => {
     setMealSaved(true);
     setProgress(1);
     let elapsed = 0;
-    const duration = 3000; // 3 seconds
+    const duration = 3000;
     const interval = 50;
     const step = interval / duration;
-
     const timer = setInterval(() => {
       elapsed += interval;
       setProgress((prev) => Math.max(0, prev - step));
@@ -136,16 +146,8 @@ const AddMeal: React.FC<AddMealPageProps> = () => {
     }, interval);
   };
 
-  // Save meal on title/description change
-  useEffect(() => {
-    if (mealKey !== null) {
-      saveMealToDb();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mealTitle, mealDescription]);
-
   return (
-    <Page title="Add Meal" path="/">
+    <Page title="Edit Meal" path={"/meals"}>
       <Stack tokens={{ childrenGap: 20 }}>
         <MealSavedBar
           visible={mealSaved}
@@ -155,7 +157,7 @@ const AddMeal: React.FC<AddMealPageProps> = () => {
             setProgress(1);
           }}
         />
-        <Text variant="large">Add new meal</Text>
+        <Text variant="large">Edit meal</Text>
         <Stack tokens={{ childrenGap: 12 }} style={{ maxWidth: 500 }}>
           <TextField
             label="Meal Title"
@@ -235,4 +237,4 @@ const AddMeal: React.FC<AddMealPageProps> = () => {
   );
 };
 
-export default AddMeal;
+export default EditMeal;
