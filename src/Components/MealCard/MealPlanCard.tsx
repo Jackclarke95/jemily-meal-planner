@@ -1,10 +1,10 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { MealType } from "../../Types/Meal";
-import Meal from "./Meal";
-import { collateIngredients } from "../../utils/collateIngredients";
-import ShoppingList from "../ShoppingList";
+// import Meal from "./Meal";
+// import { collateIngredients } from "../../utils/collateIngredients";
+// import ShoppingList from "../ShoppingList";
 import { getTheme } from "@fluentui/react";
-import { DAYS_OF_WEEK } from "../../lib/globalConsts";
+// import { DAYS_OF_WEEK } from "../../lib/globalConsts";
 
 type MealPlanCardProps = {
   title: string;
@@ -14,18 +14,18 @@ type MealPlanCardProps = {
 export default function MealPlanCard({ title, meals }: MealPlanCardProps) {
   const theme = getTheme();
 
-  const [collapsed, setCollapsed] = useState(false);
-  const [showShoppingList, setShowShoppingList] = useState(false);
+  // const [collapsed, setCollapsed] = useState(false);
+  // const [showShoppingList, setShowShoppingList] = useState(false);
 
-  const toggleCollapsed = () => {
-    setCollapsed((prev) => !prev);
-  };
+  // const toggleCollapsed = () => {
+  //   setCollapsed((prev) => !prev);
+  // };
 
-  const toggleShoppingList = () => {
-    setShowShoppingList((prev) => !prev);
-  };
+  // const toggleShoppingList = () => {
+  //   setShowShoppingList((prev) => !prev);
+  // };
 
-  const ingredientCounts = collateIngredients(meals);
+  // const ingredientCounts = collateIngredients(meals);
 
   return (
     <div style={{ boxShadow: theme.effects.elevation8, width: "100%" }}></div>

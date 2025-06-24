@@ -10,6 +10,7 @@ const SignOutButton = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
+    
     return () => unsubscribe();
   }, []);
 
