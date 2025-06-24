@@ -1,6 +1,6 @@
 import { signOut } from "firebase/auth";
 import { auth } from "../lib/firebase";
-import { IconButton, PrimaryButton } from "@fluentui/react";
+import { IconButton } from "@fluentui/react";
 
 const SignOutButton = () => {
   const handleSignOut = async () => {

@@ -1,5 +1,4 @@
 import { Stack, Text, TextField, PrimaryButton } from "@fluentui/react";
-import IngredientList from "./IngredientList";
 import EditIngredientDialog from "./EditIngredientDialog";
 import { Ingredient } from "./MealForm";
 
