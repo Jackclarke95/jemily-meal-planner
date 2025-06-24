@@ -1,11 +1,11 @@
 import { Ingredient } from "../Types/Ingredient";
-import { MealType } from "../Types/Meal";
+import { Meal } from "../Types/Meal";
 
 /**
  * Collates all ingredients from a list of meals into a mapping:
  * { [ingredientName]: { [unit]: totalQuantity } }
  */
-export function collateIngredients(meals: MealType[]): {
+export function collateIngredients(meals: Meal[]): {
   [ingredient: string]: { [unit: string]: number };
 } {
   const ingredientMap: { [ingredient: string]: { [unit: string]: number } } =

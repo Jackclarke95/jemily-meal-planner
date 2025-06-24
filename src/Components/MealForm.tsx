@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Stack, Text, TextField, PrimaryButton } from "@fluentui/react";
+import { Stack, TextField, PrimaryButton } from "@fluentui/react";
 import IngredientList from "./IngredientList";
 import IngredientSection from "./IngredientSection";
 import EditIngredientDialog from "./EditIngredientDialog";
@@ -23,7 +23,6 @@ interface MealFormProps {
     ingredients: Ingredient[]
   ) => Promise<void>;
   saveOnFieldChange?: boolean;
-  formTitle: string;
 }
 
 function normalizeUnit(unit: string): string {
@@ -31,18 +30,14 @@ function normalizeUnit(unit: string): string {
   return INGREDIENT_UNIT_LOOKUP[cleaned] || unit;
 }
 
-const MealForm: React.FC<MealFormProps> = ({
-  initialTitle = "",
-  initialDescription = "",
-  initialIngredients = [],
-  onSave,
-  saveOnFieldChange = false,
-  formTitle,
-}) => {
-  const [mealTitle, setMealTitle] = useState(initialTitle);
-  const [mealDescription, setMealDescription] = useState(initialDescription);
-  const [ingredients, setIngredients] =
-    useState<Ingredient[]>(initialIngredients);
+const MealForm: React.FC<MealFormProps> = (props) => {
+  const [mealTitle, setMealTitle] = useState(props.initialTitle ?? "");
+  const [mealDescription, setMealDescription] = useState(
+    props.initialDescription ?? ""
+  );
+  const [ingredients, setIngredients] = useState<Ingredient[]>(
+    props.initialIngredients ?? []
+  );
   const [newIngredient, setNewIngredient] = useState<Ingredient>({
     name: "",
     quantity: "",
@@ -51,10 +46,10 @@ const MealForm: React.FC<MealFormProps> = ({
 
   // Sync state with props if the meal changes (e.g., when editing a different meal)
   useEffect(() => {
-    setMealTitle(initialTitle);
-    setMealDescription(initialDescription);
-    setIngredients(initialIngredients);
-  }, [initialTitle, initialDescription, initialIngredients]);
+    setMealTitle(props.initialTitle ?? "");
+    setMealDescription(props.initialDescription ?? "");
+    setIngredients(props.initialIngredients ?? []);
+  }, [props.initialTitle, props.initialDescription, props.initialIngredients]);
 
   // Edit dialog state
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -90,7 +85,7 @@ const MealForm: React.FC<MealFormProps> = ({
     description?: string;
     ingredients?: Ingredient[];
   }) => {
-    await onSave(
+    await props.onSave(
       override?.title ?? mealTitle,
       override?.description ?? mealDescription,
       override?.ingredients ?? ingredients
@@ -142,11 +137,11 @@ const MealForm: React.FC<MealFormProps> = ({
   // Only for AddMeal, not EditMeal
   const handleTitleChange = (_: any, v?: string) => {
     setMealTitle(v || "");
-    if (saveOnFieldChange) handleSave({ title: v || "" });
+    if (props.saveOnFieldChange) handleSave({ title: v || "" });
   };
   const handleDescriptionChange = (_: any, v?: string) => {
     setMealDescription(v || "");
-    if (saveOnFieldChange) handleSave({ description: v || "" });
+    if (props.saveOnFieldChange) handleSave({ description: v || "" });
   };
 
   return (
@@ -159,7 +154,6 @@ const MealForm: React.FC<MealFormProps> = ({
           setProgress(1);
         }}
       />
-      <Text variant="large">{formTitle}</Text>
       <Stack tokens={{ childrenGap: 12 }} style={{ maxWidth: 500 }}>
         <TextField
           label="Meal Title"

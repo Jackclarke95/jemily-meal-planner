@@ -46,7 +46,6 @@ const EditMeal: React.FC = () => {
   return (
     <Page title="Edit Meal" path="/meals">
       <MealForm
-        formTitle="Edit meal"
         initialTitle={initialTitle}
         initialDescription={initialDescription}
         initialIngredients={initialIngredients}

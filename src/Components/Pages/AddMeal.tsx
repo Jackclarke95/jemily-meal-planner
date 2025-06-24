@@ -34,11 +34,7 @@ const AddMeal: React.FC = () => {
 
   return (
     <Page title="Add Meal" path="/">
-      <MealForm
-        formTitle="Add new meal"
-        onSave={saveMealToDb}
-        saveOnFieldChange={true}
-      />
+      <MealForm onSave={saveMealToDb} saveOnFieldChange={true} />
     </Page>
   );
 };

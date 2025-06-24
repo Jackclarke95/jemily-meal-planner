@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Stack, Text, DetailsList, IColumn, IconButton } from "@fluentui/react";
+import { Stack, DetailsList, IColumn, IconButton } from "@fluentui/react";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../lib/firebase";
 import { useNavigate } from "react-router-dom";
@@ -37,7 +37,7 @@ const columns: IColumn[] = [
   },
 ];
 
-const ViewMeals: React.FC = () => {
+const Meals: React.FC = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
   const navigate = useNavigate();
 
@@ -62,9 +62,8 @@ const ViewMeals: React.FC = () => {
   }, [navigate]);
 
   return (
-    <Page title="View Meals" path="/">
+    <Page title="Meals" path="/">
       <Stack tokens={{ childrenGap: 24 }}>
-        <Text variant="xLargePlus">All Meals</Text>
         <DetailsList
           items={meals}
           columns={columns}
@@ -77,4 +76,4 @@ const ViewMeals: React.FC = () => {
   );
 };
 
-export default ViewMeals;
+export default Meals;

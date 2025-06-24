@@ -4,7 +4,7 @@ import Home from "./Components/Pages/Home";
 import Login from "./Components/Login";
 import { createBrowserRouter, RouteObject, RouterProvider } from "react-router";
 import AddMeal from "./Components/Pages/AddMeal";
-import ViewMeals from "./Components/Pages/ViewMeals";
+import Meals from "./Components/Pages/Meals";
 import EditMeal from "./Components/Pages/EditMeal"; // <-- Import the EditMeal page
 
 const App = () => {
@@ -27,7 +27,7 @@ const App = () => {
       element: <Home user={user} />,
     },
     { path: "/add-meal", element: <AddMeal /> },
-    { path: "/meals", element: <ViewMeals /> },
+    { path: "/meals", element: <Meals /> },
     { path: "/edit-meal/:id", element: <EditMeal /> }, // <-- Add this route
   ];
 
