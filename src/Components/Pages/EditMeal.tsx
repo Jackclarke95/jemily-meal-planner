@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { ref, get, update } from "firebase/database";
 import { db } from "../../lib/firebase";
 import { Stack, Text, TextField, PrimaryButton } from "@fluentui/react";
@@ -23,7 +23,6 @@ function normalizeUnit(unit: string): string {
 
 const EditMeal: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
 
   const [mealTitle, setMealTitle] = useState("");
   const [mealDescription, setMealDescription] = useState("");

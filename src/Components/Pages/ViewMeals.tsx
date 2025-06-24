@@ -4,10 +4,11 @@ import { ref, onValue } from "firebase/database";
 import { db } from "../../lib/firebase";
 import { useNavigate } from "react-router-dom";
 import Page from "../Page";
+import { Ingredient } from "../../Types/Ingredient";
 
 interface Meal {
   title: string;
-  ingredients: any[];
+  ingredients: Ingredient[];
   updatedAt?: string;
   [key: string]: any;
 }
