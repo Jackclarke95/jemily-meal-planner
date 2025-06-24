@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { auth, db } from "./lib/firebase";
+import { useEffect, useState } from "react";
+import { auth } from "./lib/firebase";
 import Home from "./Components/Home";
 import Login from "./Components/Login";
 

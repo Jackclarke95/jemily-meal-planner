@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged,
-  User,
-} from "firebase/auth";
+import { signOut, onAuthStateChanged, User } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { PrimaryButton } from "@fluentui/react";
 
