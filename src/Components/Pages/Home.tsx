@@ -3,11 +3,9 @@ import { User } from "firebase/auth";
 import NavCard from "../NavCard";
 import Page from "../Page";
 
-interface HomePageProps {
-  user: User;
-}
+interface HomePageProps {}
 
-const Home: React.FC<HomePageProps> = (props) => {
+const Home: React.FC<HomePageProps> = () => {
   return (
     <Page title="Meal Planner">
       <Stack tokens={{ childrenGap: 20 }}>
@@ -21,6 +19,18 @@ const Home: React.FC<HomePageProps> = (props) => {
             title="View Meals"
             description="Browse existing meals"
             path={"/meals"}
+          />
+        </Stack>
+        <Stack horizontal style={{ gap: "2rem" }}>
+          <NavCard
+            title="Lunch Plans"
+            description="View weekly lunch plans"
+            path={"/lunch-plans"}
+          />
+          <NavCard
+            title="Dinner Plans"
+            description="View weekly dinner plans"
+            path={"/dinner-plans"}
           />
         </Stack>
       </Stack>

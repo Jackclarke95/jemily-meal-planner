@@ -5,23 +5,14 @@ import IngredientSection from "./IngredientSection";
 import EditIngredientDialog from "./EditIngredientDialog";
 import MealSavedBar from "./MealSavedBar";
 import { INGREDIENT_UNIT_LOOKUP } from "../lib/globalConsts";
-
-export interface Ingredient {
-  name: string;
-  quantity: string;
-  unit: string;
-  key?: string;
-}
+import { Ingredient } from "../Types/Ingredient";
+import { Meal } from "../Types/Meal";
 
 interface MealFormProps {
-  initialTitle?: string;
-  initialDescription?: string;
+  initialName?: string;
+  initialServings?: number;
   initialIngredients?: Ingredient[];
-  onSave: (
-    title: string,
-    description: string,
-    ingredients: Ingredient[]
-  ) => Promise<void>;
+  onSave: (meal: Meal) => Promise<void>;
   saveOnFieldChange?: boolean;
 }
 
@@ -31,10 +22,8 @@ function normalizeUnit(unit: string): string {
 }
 
 const MealForm: React.FC<MealFormProps> = (props) => {
-  const [mealTitle, setMealTitle] = useState(props.initialTitle ?? "");
-  const [mealDescription, setMealDescription] = useState(
-    props.initialDescription ?? ""
-  );
+  const [name, setName] = useState(props.initialName ?? "");
+  const [servings, setServings] = useState<number>(props.initialServings ?? 1);
   const [ingredients, setIngredients] = useState<Ingredient[]>(
     props.initialIngredients ?? []
   );
@@ -46,10 +35,10 @@ const MealForm: React.FC<MealFormProps> = (props) => {
 
   // Sync state with props if the meal changes (e.g., when editing a different meal)
   useEffect(() => {
-    setMealTitle(props.initialTitle ?? "");
-    setMealDescription(props.initialDescription ?? "");
+    setName(props.initialName ?? "");
+    setServings(props.initialServings ?? 1);
     setIngredients(props.initialIngredients ?? []);
-  }, [props.initialTitle, props.initialDescription, props.initialIngredients]);
+  }, [props.initialName, props.initialServings, props.initialIngredients]);
 
   // Edit dialog state
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -81,15 +70,18 @@ const MealForm: React.FC<MealFormProps> = (props) => {
 
   // Save handler
   const handleSave = async (override?: {
-    title?: string;
-    description?: string;
+    id?: string;
+    name?: string;
+    servings?: number;
     ingredients?: Ingredient[];
   }) => {
-    await props.onSave(
-      override?.title ?? mealTitle,
-      override?.description ?? mealDescription,
-      override?.ingredients ?? ingredients
-    );
+    const meal: Meal = {
+      id: override?.id ?? "",
+      name: override?.name ?? name,
+      servings: override?.servings ?? servings,
+      ingredients: override?.ingredients ?? ingredients,
+    };
+    await props.onSave(meal);
     showSavedBar();
   };
 
@@ -133,15 +125,17 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     closeEditDialog();
   };
 
-  // Save meal on title/description change (optional)
+  // Save meal on name or servings change (optional)
   // Only for AddMeal, not EditMeal
-  const handleTitleChange = (_: any, v?: string) => {
-    setMealTitle(v || "");
-    if (props.saveOnFieldChange) handleSave({ title: v || "" });
+  const handleNameChange = (_: any, v?: string) => {
+    setName(v || "");
+    if (props.saveOnFieldChange) handleSave({ name: v || "" });
   };
-  const handleDescriptionChange = (_: any, v?: string) => {
-    setMealDescription(v || "");
-    if (props.saveOnFieldChange) handleSave({ description: v || "" });
+
+  const handleServingsChange = (_: any, v?: string) => {
+    const num = Number(v);
+    setServings(num > 0 ? num : 1);
+    if (props.saveOnFieldChange) handleSave({ servings: num > 0 ? num : 1 });
   };
 
   return (
@@ -155,17 +149,13 @@ const MealForm: React.FC<MealFormProps> = (props) => {
         }}
       />
       <Stack tokens={{ childrenGap: 12 }} style={{ maxWidth: 500 }}>
+        <TextField label="Meal Name" value={name} onChange={handleNameChange} />
         <TextField
-          label="Meal Title"
-          value={mealTitle}
-          onChange={handleTitleChange}
-        />
-        <TextField
-          label="Meal Description"
-          value={mealDescription}
-          onChange={handleDescriptionChange}
-          multiline
-          rows={3}
+          label="Servings"
+          type="number"
+          min={1}
+          value={servings.toString()}
+          onChange={handleServingsChange}
         />
       </Stack>
       <IngredientList ingredients={ingredients} onEdit={openEditDialog} />

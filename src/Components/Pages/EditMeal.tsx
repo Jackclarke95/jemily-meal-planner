@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { ref, get, update } from "firebase/database";
 import { db } from "../../lib/firebase";
-import MealForm, { Ingredient } from "../MealForm";
+import MealForm from "../MealForm";
 import Page from "../Page";
+import { Ingredient } from "../../Types/Ingredient";
+import { Meal } from "../../Types/Meal";
 
 const EditMeal: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [initialTitle, setInitialTitle] = useState("");
-  const [initialDescription, setInitialDescription] = useState("");
+  const [initialName, setInitialName] = useState("");
   const [initialIngredients, setInitialIngredients] = useState<Ingredient[]>(
     []
   );
@@ -19,24 +20,17 @@ const EditMeal: React.FC = () => {
     get(mealRef).then((snapshot) => {
       const data = snapshot.val();
       if (data) {
-        setInitialTitle(data.title || "");
-        setInitialDescription(data.description || "");
+        setInitialName(data.title || "");
         setInitialIngredients(data.ingredients || []);
       }
     });
   }, [id]);
 
   // Save handler for Edit
-  const saveMealToDb = async (
-    title: string,
-    description: string,
-    ingredients: Ingredient[]
-  ) => {
+  const saveMealToDb = async (meal: Meal) => {
     if (!id) return;
     const mealData = {
-      title,
-      description,
-      ingredients,
+      ...meal,
       updatedAt: new Date().toISOString(),
     };
     const mealRef = ref(db, `meals/${id}`);
@@ -44,10 +38,9 @@ const EditMeal: React.FC = () => {
   };
 
   return (
-    <Page title="Edit Meal" path="/meals">
+    <Page title="Edit Meal" backPath="/meals">
       <MealForm
-        initialTitle={initialTitle}
-        initialDescription={initialDescription}
+        initialName={initialName}
         initialIngredients={initialIngredients}
         onSave={saveMealToDb}
         saveOnFieldChange={false}

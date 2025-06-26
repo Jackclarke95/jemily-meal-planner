@@ -1,23 +1,18 @@
 import { useState } from "react";
 import { ref, push, set, update } from "firebase/database";
 import { db } from "../../lib/firebase";
-import MealForm, { Ingredient } from "../MealForm";
+import MealForm from "../MealForm";
 import Page from "../Page";
+import { Meal } from "../../Types/Meal";
 
 const AddMeal: React.FC = () => {
   const [mealKey, setMealKey] = useState<string | null>(null);
 
   // Save handler for Add
-  const saveMealToDb = async (
-    title: string,
-    description: string,
-    ingredients: Ingredient[]
-  ) => {
+  const saveMealToDb = async (meal: Meal) => {
     let key = mealKey;
     const mealData = {
-      title,
-      description,
-      ingredients,
+      ...meal,
       updatedAt: new Date().toISOString(),
     };
     if (!key) {
@@ -33,7 +28,7 @@ const AddMeal: React.FC = () => {
   };
 
   return (
-    <Page title="Add Meal" path="/">
+    <Page title="Add Meal" backPath="/">
       <MealForm onSave={saveMealToDb} saveOnFieldChange={true} />
     </Page>
   );

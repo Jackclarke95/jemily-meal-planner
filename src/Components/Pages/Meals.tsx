@@ -62,7 +62,7 @@ const Meals: React.FC = () => {
   }, [navigate]);
 
   return (
-    <Page title="Meals" path="/">
+    <Page title="Meals" backPath="/">
       <Stack tokens={{ childrenGap: 24 }}>
         <DetailsList
           items={meals}

@@ -1,6 +1,6 @@
 import { Stack, Text, TextField, PrimaryButton } from "@fluentui/react";
 import EditIngredientDialog from "./EditIngredientDialog";
-import { Ingredient } from "./MealForm";
+import { Ingredient } from "../Types/Ingredient";
 
 interface IngredientSectionProps {
   ingredients: Ingredient[];
@@ -16,11 +16,9 @@ interface IngredientSectionProps {
 }
 
 const IngredientSection: React.FC<IngredientSectionProps> = ({
-  ingredients,
   newIngredient,
   setNewIngredient,
   addIngredient,
-  openEditDialog,
   editDialogOpen,
   editIngredient,
   setEditIngredient,

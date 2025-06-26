@@ -6,7 +6,7 @@ import SignOutButton from "./SignOutButton";
 interface PageProps {
   children: ReactNode;
   title: string;
-  path?: string;
+  backPath?: string;
 }
 
 const Page: React.FC<PageProps> = (props) => {
@@ -26,10 +26,10 @@ const Page: React.FC<PageProps> = (props) => {
     >
       <Stack horizontal horizontalAlign="space-between" verticalAlign="center">
         <IconButton
-          iconProps={{ iconName: props.path ? "Back" : "Home" }}
+          iconProps={{ iconName: props.backPath ? "Back" : "Home" }}
           title="Back to Home"
           ariaLabel="Back to Home"
-          onClick={() => navigate(props.path || "/")}
+          onClick={() => navigate(props.backPath || "/")}
           styles={{ root: { marginRight: 8 } }}
         />
         <Text variant="xLargePlus">{props.title}</Text>
