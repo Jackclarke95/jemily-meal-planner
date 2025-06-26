@@ -11,7 +11,6 @@ interface PageProps {
 
 const Page: React.FC<PageProps> = (props) => {
   const navigate = useNavigate();
-  // Add shared components (e.g., header, footer, notifications) here if needed
   return (
     <Stack
       styles={{

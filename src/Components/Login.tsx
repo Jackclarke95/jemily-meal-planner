@@ -48,9 +48,9 @@ const Login = () => {
           <Image
             src={AppLogo}
             alt="Meal Planner Icon"
-            width={128}
-            height={128}
-            style={{ display: "block", margin: "0 auto" }}
+            width={256}
+            height={256}
+            style={{ display: "block", margin: "0 auto", borderRadius: "32px" }}
           />
           <Text>You are already signed in.</Text>
           <PrimaryButton
@@ -93,11 +93,10 @@ const Login = () => {
         <Image
           src={AppLogo}
           alt="Meal Planner Icon"
-          width={128}
-          height={128}
-          style={{ display: "block", margin: "0 auto" }}
+          width={256}
+          height={256}
+          style={{ display: "block", margin: "0 auto", borderRadius: "32px" }}
         />
-        <Text>Please sign in to access the meal planner.</Text>
         <DefaultButton
           onClick={handleSignIn}
           style={{
@@ -114,6 +113,7 @@ const Login = () => {
               height: 18,
               marginRight: 12,
               verticalAlign: "middle",
+              borderRadius: "4px", // Add border radius to Google logo as well
             }}
           />
           Sign in with Google
