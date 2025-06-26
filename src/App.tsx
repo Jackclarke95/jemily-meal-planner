@@ -10,7 +10,7 @@ import LunchPlans from "./Components/Pages/LunchPlans";
 import DinnerPlans from "./Components/Pages/DinnerPlans";
 import AddLunchPlans from "./Components/Pages/AddLunchPlan";
 import AddDinnerPlans from "./Components/Pages/AddDinnerPlan";
-import { MealTypeEnum } from "./Types/MealType";
+import { MealTypes } from "./Types/MealType";
 
 const App = () => {
   const [user, setUser] = useState(() => auth.currentUser);
@@ -32,12 +32,18 @@ const App = () => {
       element: <Home />,
     },
     { path: "/login", element: <Login /> },
-    { path: "/lunches", element: <Meals mealType={MealTypeEnum.Lunch} /> },
-    { path: "/dinners", element: <Meals mealType={MealTypeEnum.Dinner} /> },
-    { path: "/add-lunch", element: <AddMeal mealType={MealTypeEnum.Lunch} /> },
-    { path: "/add-dinner", element: <AddMeal mealType={MealTypeEnum.Dinner} /> },
-    { path: "/edit-lunch/:id", element: <EditMeal mealType={MealTypeEnum.Lunch} /> },
-    { path: "/edit-dinner/:id", element: <EditMeal mealType={MealTypeEnum.Dinner} /> },
+    { path: "/lunches", element: <Meals mealType={MealTypes.Lunch} /> },
+    { path: "/dinners", element: <Meals mealType={MealTypes.Dinner} /> },
+    { path: "/add-lunch", element: <AddMeal mealType={MealTypes.Lunch} /> },
+    { path: "/add-dinner", element: <AddMeal mealType={MealTypes.Dinner} /> },
+    {
+      path: "/edit-lunch/:id",
+      element: <EditMeal mealType={MealTypes.Lunch} />,
+    },
+    {
+      path: "/edit-dinner/:id",
+      element: <EditMeal mealType={MealTypes.Dinner} />,
+    },
     { path: "/lunch-plans", element: <LunchPlans /> },
     { path: "/dinner-plans", element: <DinnerPlans /> },
     { path: "/add-lunch-plan", element: <AddLunchPlans /> },

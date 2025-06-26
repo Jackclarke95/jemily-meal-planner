@@ -48,12 +48,12 @@ const Home: React.FC<HomePageProps> = () => {
           <NavCard
             title="Add Lunch Plan"
             description="Add a weekly lunch plan"
-            path={"/lunch-plans"}
+            path={"/add-lunch-plan"}
           />
           <NavCard
             title="Add Dinner Plan"
             description="Add a weekly dinner plan"
-            path={"/dinner-plans"}
+            path={"/add-dinner-plan"}
           />
         </Stack>
       </Stack>

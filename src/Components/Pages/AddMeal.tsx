@@ -5,7 +5,7 @@ import MealForm from "../MealForm";
 import Page from "../Page";
 import { Meal } from "../../Types/Meal";
 import { MealType } from "../../Types/MealType";
-import { MEAL_PLURAL_LOOKUP } from "../../Utils/Consts/MEAL_TYPE_LOOKUP";
+import { MEAL_PLURAL_LOOKUP } from "../../Utils/Consts/MEAL_PLURAL_LOOKUP";
 
 interface AddMealProps {
   mealType: MealType;

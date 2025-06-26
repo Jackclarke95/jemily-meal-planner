@@ -1,12 +1,17 @@
-import { Text } from "@fluentui/react";
 import Page from "../Page";
+import MealPlanBuilder from "../MealPlanBuilder";
+import { MealTypes } from "../../Types/MealType";
 
-const AddDinnerPlans = () => {
-  return (
-    <Page title="Add Dinner Plan" backPath="/">
-      <Text>Here you can create your dinner plans.</Text>
-    </Page>
-  );
-};
+const AddDinnerPlans = () => (
+  <Page title="Add Dinner Plan" backPath="/">
+    <MealPlanBuilder
+      mealType={MealTypes.Dinner}
+      planDbPath="dinner-plans"
+      title="Add Dinner Plan"
+      selectLabel="Select Dinners:"
+      noMealsText="No dinners selected yet."
+    />
+  </Page>
+);
 
 export default AddDinnerPlans;

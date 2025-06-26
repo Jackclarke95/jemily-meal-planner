@@ -14,7 +14,7 @@ import {
   DefaultButton,
 } from "@fluentui/react";
 import { MealType } from "../../Types/MealType";
-import { MEAL_PLURAL_LOOKUP } from "../../Utils/Consts/MEAL_TYPE_LOOKUP";
+import { MEAL_PLURAL_LOOKUP } from "../../Utils/Consts/MEAL_PLURAL_LOOKUP";
 
 interface EditMealProps {
   mealType: MealType;

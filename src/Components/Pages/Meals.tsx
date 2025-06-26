@@ -11,8 +11,8 @@ import { db } from "../../lib/firebase";
 import { useNavigate } from "react-router-dom";
 import Page from "../Page";
 import { Meal } from "../../Types/Meal";
-import { MealTypeEnum, MealType } from "../../Types/MealType";
-import { MEAL_PLURAL_LOOKUP } from "../../Utils/Consts/MEAL_TYPE_LOOKUP";
+import { MealTypes, MealType } from "../../Types/MealType";
+import { MEAL_PLURAL_LOOKUP } from "../../Utils/Consts/MEAL_PLURAL_LOOKUP";
 
 interface MealsProps {
   mealType: MealType;
@@ -83,7 +83,7 @@ const Meals: React.FC<MealsProps> = (props) => {
             iconProps={{ iconName: "Add" }}
             onClick={() =>
               navigate(
-                props.mealType === MealTypeEnum.Lunch
+                props.mealType === MealTypes.Lunch
                   ? "/add-lunch"
                   : "/add-dinner"
               )
