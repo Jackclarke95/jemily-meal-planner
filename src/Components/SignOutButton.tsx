@@ -1,5 +1,5 @@
 import { signOut } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import { auth } from "../Lib/firebase";
 import { IconButton } from "@fluentui/react";
 
 const SignOutButton = () => {

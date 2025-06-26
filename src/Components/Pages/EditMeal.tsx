@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ref, get, update, remove } from "firebase/database";
-import { db } from "../../lib/firebase";
+import { db } from "../../Lib/firebase";
 import MealForm from "../MealForm";
 import Page from "../Page";
 import { Ingredient } from "../../Types/Ingredient";

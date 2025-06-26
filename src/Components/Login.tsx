@@ -1,6 +1,6 @@
 import { DefaultEffects, PrimaryButton, Stack, Text } from "@fluentui/react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../lib/firebase";
+import { auth } from "../Lib/firebase";
 import { useEffect, useState } from "react";
 
 const Login = () => {

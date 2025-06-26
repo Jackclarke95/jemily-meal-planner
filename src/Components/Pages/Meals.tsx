@@ -7,7 +7,7 @@ import {
   PrimaryButton,
 } from "@fluentui/react";
 import { ref, onValue } from "firebase/database";
-import { db } from "../../lib/firebase";
+import { db } from "../../Lib/firebase";
 import { useNavigate } from "react-router-dom";
 import Page from "../Page";
 import { Meal } from "../../Types/Meal";

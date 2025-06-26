@@ -1,13 +1,3 @@
-export const DAYS_OF_WEEK = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
-
 export const INGREDIENT_UNIT_LOOKUP: Record<string, string> = {
   g: "grams",
   gram: "grams",
@@ -36,5 +26,19 @@ export const INGREDIENT_UNIT_LOOKUP: Record<string, string> = {
   piece: "pieces",
   pieces: "pieces",
   each: "pieces",
-  // Add more as needed
+  single: "pieces",
+  pc: "pieces",
+  pcs: "pieces",
+  pinch: "pinches",
+  pinches: "pinches",
+  1: "pieces",
+  2: "pieces",
+  3: "pieces",
+  4: "pieces",
+  5: "pieces",
+  6: "pieces",
+  7: "pieces",
+  8: "pieces",
+  9: "pieces",
+  10: "pieces",
 };

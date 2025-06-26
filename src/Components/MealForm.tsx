@@ -9,9 +9,9 @@ import {
   NeutralColors,
 } from "@fluentui/react";
 import IngredientList from "./IngredientList";
-import IngredientForm from "./IngredientSection";
+import IngredientForm from "./IngredientForm";
 import EditIngredientDialog from "./EditIngredientDialog";
-import { INGREDIENT_UNIT_LOOKUP } from "../lib/globalConsts";
+import { INGREDIENT_UNIT_LOOKUP } from "../Utils/Consts/INGREDIENT_UNIT_LOOKUP";
 import { Ingredient } from "../Types/Ingredient";
 import { Meal } from "../Types/Meal";
 
@@ -60,12 +60,13 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     servings?: number;
     ingredients?: Ingredient[];
   }) => {
-    const meal: Meal = {
-      id: override?.id ?? "",
+    // Do not include id in the object passed to onSave
+    const meal: Omit<Meal, "id"> = {
       name: (override?.name ?? name).trim() || "Untitled Meal",
       servings: override?.servings ?? servings,
       ingredients: override?.ingredients ?? ingredients,
     };
+    // @ts-ignore - onSave expects Meal, but id is not needed for DB
     await props.onSave(meal);
   };
 
@@ -130,6 +131,7 @@ const MealForm: React.FC<MealFormProps> = (props) => {
           onChange={handleServingsChange}
         />
       </Stack>
+
       <IngredientList ingredients={ingredients} onEdit={openEditDialog} />
       <IngredientForm
         ingredients={ingredients}

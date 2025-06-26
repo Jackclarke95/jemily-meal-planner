@@ -1,5 +1,5 @@
-import { Ingredient } from "../Types/Ingredient";
-import { Meal } from "../Types/Meal";
+import { Ingredient } from "../../Types/Ingredient";
+import { Meal } from "../../Types/Meal";
 
 /**
  * Collates all ingredients from a list of meals into a mapping:

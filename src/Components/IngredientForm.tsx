@@ -10,7 +10,10 @@ import {
 } from "@fluentui/react";
 import EditIngredientDialog from "./EditIngredientDialog";
 import { Ingredient } from "../Types/Ingredient";
-import { INGREDIENT_UNIT_LOOKUP } from "../lib/globalConsts";
+import { INGREDIENT_UNIT_LOOKUP } from "../Utils/Consts/INGREDIENT_UNIT_LOOKUP";
+import { useRef } from "react";
+import type { ITextField } from "@fluentui/react";
+import { toTitleCase } from "../Utils/Helpers/ToTitleCase";
 
 interface IngredientSectionProps {
   ingredients: Ingredient[];
@@ -54,6 +57,32 @@ const IngredientForm: React.FC<IngredientSectionProps> = ({
 }) => {
   const theme = useTheme();
 
+  const nameInputRef = useRef<ITextField | null>(null);
+
+  // Validation: all fields must be filled
+  const isIngredientValid =
+    !!newIngredient.name.trim() &&
+    !!newIngredient.quantity.toString().trim() &&
+    !!newIngredient.unit.trim();
+
+  // Handler for Enter key on any input
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (isIngredientValid) {
+        // Save with title case for name
+        setNewIngredient({
+          ...newIngredient,
+          name: toTitleCase(newIngredient.name),
+        });
+        addIngredient();
+        setTimeout(() => {
+          nameInputRef.current?.focus();
+        }, 0);
+      }
+    }
+  };
+
   return (
     <Stack
       style={{
@@ -69,9 +98,11 @@ const IngredientForm: React.FC<IngredientSectionProps> = ({
           label="Ingredient name"
           value={newIngredient.name}
           onChange={(_, v) =>
-            setNewIngredient({ ...newIngredient, name: v || "" })
+            setNewIngredient({ ...newIngredient, name: toTitleCase(v || "") })
           }
           styles={{ root: { minWidth: 180 } }}
+          onKeyDown={handleKeyDown}
+          componentRef={nameInputRef}
         />
         <TextField
           label="Quantity"
@@ -84,6 +115,7 @@ const IngredientForm: React.FC<IngredientSectionProps> = ({
             })
           }
           styles={{ root: { minWidth: 120 } }}
+          onKeyDown={handleKeyDown}
         />
         <Stack horizontal verticalAlign="end">
           <TextField
@@ -93,6 +125,7 @@ const IngredientForm: React.FC<IngredientSectionProps> = ({
               setNewIngredient({ ...newIngredient, unit: v || "" })
             }
             styles={{ root: { minWidth: 120 } }}
+            onKeyDown={handleKeyDown}
             onRenderLabel={(props) => (
               <Stack horizontal verticalAlign="center">
                 <Label>{props?.label}</Label>
@@ -114,8 +147,20 @@ const IngredientForm: React.FC<IngredientSectionProps> = ({
         </Stack>
         <PrimaryButton
           text="Add Ingredient"
-          onClick={addIngredient}
+          onClick={() => {
+            if (isIngredientValid) {
+              setNewIngredient({
+                ...newIngredient,
+                name: toTitleCase(newIngredient.name),
+              });
+              addIngredient();
+              setTimeout(() => {
+                nameInputRef.current?.focus();
+              }, 0);
+            }
+          }}
           style={{ alignSelf: "end" }}
+          disabled={!isIngredientValid}
         />
       </Stack>
 
