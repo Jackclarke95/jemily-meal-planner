@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { Stack, DetailsList, IColumn, SelectionMode } from "@fluentui/react";
+import {
+  Stack,
+  DetailsList,
+  IColumn,
+  SelectionMode,
+  PrimaryButton,
+} from "@fluentui/react";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../lib/firebase";
 import { useNavigate } from "react-router-dom";
@@ -61,6 +67,13 @@ const Meals: React.FC = () => {
   return (
     <Page title="Meals" backPath="/">
       <Stack tokens={{ childrenGap: 24 }}>
+        <Stack horizontal horizontalAlign="end">
+          <PrimaryButton
+            text="Add meal"
+            iconProps={{ iconName: "Add" }}
+            onClick={() => navigate("/add-meal")}
+          />
+        </Stack>
         <DetailsList
           items={meals}
           columns={columns}
