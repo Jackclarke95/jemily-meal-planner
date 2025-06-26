@@ -7,6 +7,7 @@ import {
   Text,
 } from "@fluentui/react";
 import { Ingredient } from "../Types/Ingredient";
+import { toTitleCase } from "../Utils/Helpers/ToTitleCase"; // <-- Import the helper
 
 interface IngredientListProps {
   ingredients: Ingredient[];
@@ -21,6 +22,7 @@ const IngredientList: React.FC<IngredientListProps> = (props) => {
       fieldName: "name",
       minWidth: 100,
       isResizable: true,
+      onRender: (item: Ingredient) => <span>{toTitleCase(item.name)}</span>,
     },
     {
       key: "quantityUnit",

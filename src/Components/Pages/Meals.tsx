@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Stack,
-  DetailsList,
+  ShimmeredDetailsList,
   IColumn,
   SelectionMode,
   PrimaryButton,
@@ -14,6 +14,7 @@ import { Meal } from "../../Types/Meal";
 
 const Meals: React.FC = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   // Handler for row click
@@ -45,6 +46,7 @@ const Meals: React.FC = () => {
   ];
 
   useEffect(() => {
+    setLoading(true);
     const mealsRef = ref(db, "meals");
     const unsubscribe = onValue(mealsRef, (snapshot) => {
       const data = snapshot.val();
@@ -60,6 +62,7 @@ const Meals: React.FC = () => {
       } else {
         setMeals([]);
       }
+      setLoading(false);
     });
     return () => unsubscribe();
   }, [navigate]);
@@ -74,13 +77,14 @@ const Meals: React.FC = () => {
             onClick={() => navigate("/add-meal")}
           />
         </Stack>
-        <DetailsList
+        <ShimmeredDetailsList
           items={meals}
           columns={columns}
           setKey="set"
           selectionMode={SelectionMode.none}
           styles={{ root: { background: "#fff", borderRadius: 8, padding: 8 } }}
           onActiveItemChanged={onRowClick}
+          enableShimmer={loading}
         />
       </Stack>
     </Page>
