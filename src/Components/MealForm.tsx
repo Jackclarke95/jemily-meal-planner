@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Stack, TextField, PrimaryButton } from "@fluentui/react";
+import { Stack, TextField, PrimaryButton, SpinButton } from "@fluentui/react";
 import IngredientList from "./IngredientList";
 import IngredientSection from "./IngredientSection";
 import EditIngredientDialog from "./EditIngredientDialog";
@@ -133,9 +133,9 @@ const MealForm: React.FC<MealFormProps> = (props) => {
   };
 
   const handleServingsChange = (_: any, v?: string) => {
-    const num = Number(v);
-    setServings(num > 0 ? num : 1);
-    if (props.saveOnFieldChange) handleSave({ servings: num > 0 ? num : 1 });
+    const num = v === undefined || v.trim() === "" ? 0 : Number(v);
+    setServings(num);
+    if (props.saveOnFieldChange) handleSave({ servings: num });
   };
 
   return (
@@ -150,11 +150,9 @@ const MealForm: React.FC<MealFormProps> = (props) => {
       />
       <Stack tokens={{ childrenGap: 12 }} style={{ maxWidth: 500 }}>
         <TextField label="Meal Name" value={name} onChange={handleNameChange} />
-        <TextField
+        <SpinButton
           label="Servings"
-          type="number"
-          min={1}
-          value={servings.toString()}
+          value={servings?.toString() ?? ""}
           onChange={handleServingsChange}
         />
       </Stack>

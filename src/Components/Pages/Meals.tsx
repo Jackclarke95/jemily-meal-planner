@@ -1,45 +1,37 @@
 import { useEffect, useState } from "react";
-import { Stack, DetailsList, IColumn, IconButton } from "@fluentui/react";
+import { Stack, DetailsList, IColumn } from "@fluentui/react";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../lib/firebase";
 import { useNavigate } from "react-router-dom";
 import Page from "../Page";
-import { Ingredient } from "../../Types/Ingredient";
-
-interface Meal {
-  title: string;
-  ingredients: Ingredient[];
-  updatedAt?: string;
-  [key: string]: any;
-}
-
-const columns: IColumn[] = [
-  {
-    key: "title",
-    name: "Title",
-    fieldName: "title",
-    minWidth: 120,
-    isResizable: true,
-  },
-  {
-    key: "edit",
-    name: "",
-    minWidth: 40,
-    isResizable: false,
-    onRender: (item: any) => (
-      <IconButton
-        iconProps={{ iconName: "Edit" }}
-        title="Edit"
-        ariaLabel="Edit"
-        onClick={() => item.onEdit()}
-      />
-    ),
-  },
-];
+import { Meal } from "../../Types/Meal";
 
 const Meals: React.FC = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
   const navigate = useNavigate();
+
+  const onRowClick = (_: any, item?: Meal) => {
+    if (item && item.id) {
+      navigate(`/edit-meal/${item.id}`);
+    }
+  };
+
+  const columns: IColumn[] = [
+    {
+      key: "name",
+      name: "Name",
+      fieldName: "name",
+      minWidth: 120,
+      isResizable: true,
+    },
+    {
+      key: "servings",
+      name: "Servings",
+      fieldName: "servings",
+      minWidth: 80,
+      isResizable: true,
+    },
+  ];
 
   useEffect(() => {
     const mealsRef = ref(db, "meals");
@@ -50,7 +42,6 @@ const Meals: React.FC = () => {
           ([id, meal]: [string, any]) => ({
             ...meal,
             key: id,
-            onEdit: () => navigate(`/edit-meal/${id}`),
           })
         );
         setMeals(mealList);
