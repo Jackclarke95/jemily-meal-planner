@@ -1,5 +1,5 @@
 import {
-  DetailsList,
+  ShimmeredDetailsList,
   IColumn,
   IconButton,
   SelectionMode,
@@ -7,11 +7,12 @@ import {
   Text,
 } from "@fluentui/react";
 import { Ingredient } from "../Types/Ingredient";
-import { toTitleCase } from "../Utils/Helpers/ToTitleCase"; // <-- Import the helper
+import { toTitleCase } from "../Utils/Helpers/ToTitleCase";
 
 interface IngredientListProps {
   ingredients: Ingredient[];
   onEdit: (ingredient: Ingredient, index: number) => void;
+  loading?: boolean; // Optional loading prop
 }
 
 const IngredientList: React.FC<IngredientListProps> = (props) => {
@@ -54,7 +55,7 @@ const IngredientList: React.FC<IngredientListProps> = (props) => {
   return (
     <Stack>
       <Text variant="mediumPlus">Ingredients</Text>
-      <DetailsList
+      <ShimmeredDetailsList
         items={props.ingredients}
         columns={columns.map((col) =>
           col.key === "edit"
@@ -65,6 +66,7 @@ const IngredientList: React.FC<IngredientListProps> = (props) => {
         styles={{ root: { marginTop: 16 } }}
         compact={true}
         selectionMode={SelectionMode.none}
+        enableShimmer={props.loading ?? false}
       />
     </Stack>
   );

@@ -40,12 +40,21 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     quantity: "",
     unit: "",
   });
+  const [loading, setLoading] = useState(false);
 
   // Sync state with props if the meal changes (e.g., when editing a different meal)
   useEffect(() => {
     setName(props.initialName ?? "");
     setServings(props.initialServings ?? 1);
     setIngredients(props.initialIngredients ?? []);
+    // Only show shimmer if editing (props.initialIngredients is not empty)
+    if (props.initialIngredients && props.initialIngredients.length > 0) {
+      setLoading(true);
+      const timeout = setTimeout(() => setLoading(false), 500);
+      return () => clearTimeout(timeout);
+    } else {
+      setLoading(false);
+    }
   }, [props.initialName, props.initialServings, props.initialIngredients]);
 
   // Edit dialog state
@@ -132,7 +141,11 @@ const MealForm: React.FC<MealFormProps> = (props) => {
         />
       </Stack>
 
-      <IngredientList ingredients={ingredients} onEdit={openEditDialog} />
+      <IngredientList
+        ingredients={ingredients}
+        onEdit={openEditDialog}
+        loading={loading}
+      />
       <IngredientForm
         ingredients={ingredients}
         newIngredient={newIngredient}
