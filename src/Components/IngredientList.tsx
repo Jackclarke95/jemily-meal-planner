@@ -3,6 +3,8 @@ import {
   IColumn,
   IconButton,
   SelectionMode,
+  Stack,
+  Text,
 } from "@fluentui/react";
 import { Ingredient } from "../Types/Ingredient";
 
@@ -48,18 +50,21 @@ const IngredientList: React.FC<IngredientListProps> = (props) => {
   ];
 
   return (
-    <DetailsList
-      items={props.ingredients}
-      columns={columns.map((col) =>
-        col.key === "edit"
-          ? { ...col, onRender: (item, idx) => col.onRender?.(item, idx) }
-          : col
-      )}
-      setKey="set"
-      styles={{ root: { marginTop: 16 } }}
-      compact={true}
-      selectionMode={SelectionMode.none}
-    />
+    <Stack>
+      <Text variant="mediumPlus">Ingredients</Text>
+      <DetailsList
+        items={props.ingredients}
+        columns={columns.map((col) =>
+          col.key === "edit"
+            ? { ...col, onRender: (item, idx) => col.onRender?.(item, idx) }
+            : col
+        )}
+        setKey="set"
+        styles={{ root: { marginTop: 16 } }}
+        compact={true}
+        selectionMode={SelectionMode.none}
+      />
+    </Stack>
   );
 };
 

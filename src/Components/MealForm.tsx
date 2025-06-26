@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Stack, TextField, PrimaryButton, SpinButton } from "@fluentui/react";
 import IngredientList from "./IngredientList";
-import IngredientSection from "./IngredientSection";
+import IngredientForm from "./IngredientSection";
 import EditIngredientDialog from "./EditIngredientDialog";
 import { INGREDIENT_UNIT_LOOKUP } from "../lib/globalConsts";
 import { Ingredient } from "../Types/Ingredient";
@@ -124,7 +124,7 @@ const MealForm: React.FC<MealFormProps> = (props) => {
         />
       </Stack>
       <IngredientList ingredients={ingredients} onEdit={openEditDialog} />
-      <IngredientSection
+      <IngredientForm
         ingredients={ingredients}
         newIngredient={newIngredient}
         setNewIngredient={setNewIngredient}
