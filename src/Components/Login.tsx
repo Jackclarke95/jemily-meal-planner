@@ -1,7 +1,16 @@
-import { DefaultEffects, PrimaryButton, Stack, Text } from "@fluentui/react";
+import {
+  DefaultEffects,
+  PrimaryButton,
+  Stack,
+  Text,
+  Image,
+  DefaultButton,
+} from "@fluentui/react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../Lib/firebase";
+import { auth } from "../lib/firebase";
 import { useEffect, useState } from "react";
+import AppLogo from "../Assets/Images/App Logo.png";
+import GoogleLogo from "../Assets/Images/Google Logo.png";
 
 const Login = () => {
   const [user, setUser] = useState(() => auth.currentUser);
@@ -32,14 +41,21 @@ const Login = () => {
             backgroundColor: "#fff",
             maxWidth: "400px",
             width: "100%",
+            alignItems: "center",
           }}
-          tokens={{ childrenGap: 20 }}
+          tokens={{ childrenGap: 24 }}
         >
+          <Image
+            src={AppLogo}
+            alt="Meal Planner Icon"
+            width={128}
+            height={128}
+            style={{ display: "block", margin: "0 auto" }}
+          />
           <Text>You are already signed in.</Text>
           <PrimaryButton
             href="/"
             iconProps={{ iconName: "Home" }}
-            style={{ fontSize: "1.25rem", height: 48 }}
             text="Go to Home"
           />
         </Stack>
@@ -70,13 +86,38 @@ const Login = () => {
           backgroundColor: "#fff",
           maxWidth: "400px",
           width: "100%",
+          alignItems: "center",
         }}
-        tokens={{ childrenGap: 20 }}
+        tokens={{ childrenGap: 24 }}
       >
+        <Image
+          src={AppLogo}
+          alt="Meal Planner Icon"
+          width={128}
+          height={128}
+          style={{ display: "block", margin: "0 auto" }}
+        />
         <Text>Please sign in to access the meal planner.</Text>
-        <PrimaryButton onClick={handleSignIn}>
+        <DefaultButton
+          onClick={handleSignIn}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Image
+            src={GoogleLogo}
+            alt="Google logo"
+            style={{
+              width: 18,
+              height: 18,
+              marginRight: 12,
+              verticalAlign: "middle",
+            }}
+          />
           Sign in with Google
-        </PrimaryButton>
+        </DefaultButton>
       </Stack>
     </Stack>
   );

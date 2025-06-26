@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ref, push, set, update } from "firebase/database";
-import { db } from "../../Lib/firebase";
+import { db } from "../../lib/firebase";
 import MealForm from "../MealForm";
 import Page from "../Page";
 import { Meal } from "../../Types/Meal";
