@@ -43,6 +43,23 @@ const Meals: React.FC = () => {
         </div>
       ),
     },
+    {
+      key: "category",
+      name: "Category",
+      fieldName: "category",
+      minWidth: 100,
+      onRender: (item: Meal) => (
+        <div
+          style={{
+            textTransform: "capitalize",
+            textAlign: "center",
+            width: "100%",
+          }}
+        >
+          {item.mealType}
+        </div>
+      ),
+    },
   ];
 
   useEffect(() => {
