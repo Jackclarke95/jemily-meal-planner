@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Stack, DetailsList, IColumn } from "@fluentui/react";
+import { Stack, DetailsList, IColumn, SelectionMode } from "@fluentui/react";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../lib/firebase";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,8 @@ const Meals: React.FC = () => {
   const [meals, setMeals] = useState<Meal[]>([]);
   const navigate = useNavigate();
 
-  const onRowClick = (_: any, item?: Meal) => {
+  // Handler for row click
+  const onRowClick = (item?: Meal) => {
     if (item && item.id) {
       navigate(`/edit-meal/${item.id}`);
     }
@@ -29,7 +30,11 @@ const Meals: React.FC = () => {
       name: "Servings",
       fieldName: "servings",
       minWidth: 80,
-      isResizable: true,
+      onRender: (item: Meal) => (
+        <div style={{ textAlign: "center", width: "100%" }}>
+          {item.servings}
+        </div>
+      ),
     },
   ];
 
@@ -41,6 +46,7 @@ const Meals: React.FC = () => {
         const mealList = Object.entries(data).map(
           ([id, meal]: [string, any]) => ({
             ...meal,
+            id, // Ensure id is present for navigation
             key: id,
           })
         );
@@ -59,8 +65,9 @@ const Meals: React.FC = () => {
           items={meals}
           columns={columns}
           setKey="set"
-          selectionMode={0} // 0 = SelectionMode.none
+          selectionMode={SelectionMode.none}
           styles={{ root: { background: "#fff", borderRadius: 8, padding: 8 } }}
+          onActiveItemChanged={onRowClick}
         />
       </Stack>
     </Page>

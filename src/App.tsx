@@ -28,6 +28,7 @@ const App = () => {
       path: "/",
       element: <Home />,
     },
+    { path: "/login", element: <Login /> },
     { path: "/add-meal", element: <AddMeal /> },
     { path: "/meals", element: <Meals /> },
     { path: "/edit-meal/:id", element: <EditMeal /> },

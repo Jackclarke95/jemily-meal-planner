@@ -3,7 +3,6 @@ import { Stack, TextField, PrimaryButton, SpinButton } from "@fluentui/react";
 import IngredientList from "./IngredientList";
 import IngredientSection from "./IngredientSection";
 import EditIngredientDialog from "./EditIngredientDialog";
-import MealSavedBar from "./MealSavedBar";
 import { INGREDIENT_UNIT_LOOKUP } from "../lib/globalConsts";
 import { Ingredient } from "../Types/Ingredient";
 import { Meal } from "../Types/Meal";
@@ -45,29 +44,6 @@ const MealForm: React.FC<MealFormProps> = (props) => {
   const [editIngredient, setEditIngredient] = useState<Ingredient | null>(null);
   const [editIndex, setEditIndex] = useState<number | null>(null);
 
-  // Meal saved bar state
-  const [mealSaved, setMealSaved] = useState(false);
-  const [progress, setProgress] = useState(1);
-
-  // Save bar logic
-  const showSavedBar = () => {
-    setMealSaved(true);
-    setProgress(1);
-    let elapsed = 0;
-    const duration = 3000;
-    const interval = 50;
-    const step = interval / duration;
-    const timer = setInterval(() => {
-      elapsed += interval;
-      setProgress((prev) => Math.max(0, prev - step));
-      if (elapsed >= duration) {
-        clearInterval(timer);
-        setMealSaved(false);
-        setProgress(1);
-      }
-    }, interval);
-  };
-
   // Save handler
   const handleSave = async (override?: {
     id?: string;
@@ -82,7 +58,6 @@ const MealForm: React.FC<MealFormProps> = (props) => {
       ingredients: override?.ingredients ?? ingredients,
     };
     await props.onSave(meal);
-    showSavedBar();
   };
 
   // Add ingredient and save meal
@@ -140,14 +115,6 @@ const MealForm: React.FC<MealFormProps> = (props) => {
 
   return (
     <Stack tokens={{ childrenGap: 20 }}>
-      <MealSavedBar
-        visible={mealSaved}
-        progress={progress}
-        onDismiss={() => {
-          setMealSaved(false);
-          setProgress(1);
-        }}
-      />
       <Stack tokens={{ childrenGap: 12 }} style={{ maxWidth: 500 }}>
         <TextField label="Meal Name" value={name} onChange={handleNameChange} />
         <SpinButton

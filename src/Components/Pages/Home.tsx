@@ -1,5 +1,4 @@
 import { Stack } from "@fluentui/react";
-import { User } from "firebase/auth";
 import NavCard from "../NavCard";
 import Page from "../Page";
 
