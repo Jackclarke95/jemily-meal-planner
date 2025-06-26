@@ -32,6 +32,18 @@ const Home: React.FC<HomePageProps> = () => {
             path={"/dinner-plans"}
           />
         </Stack>
+        <Stack horizontal style={{ gap: "2rem" }}>
+          <NavCard
+            title="Add Lunch Plan"
+            description="Add a weekly lunch plan"
+            path={"/lunch-plans"}
+          />
+          <NavCard
+            title="Add Dinner Plan"
+            description="Add a weekly dinner plan"
+            path={"/dinner-plans"}
+          />
+        </Stack>
       </Stack>
     </Page>
   );

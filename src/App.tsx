@@ -8,6 +8,8 @@ import Meals from "./Components/Pages/Meals";
 import EditMeal from "./Components/Pages/EditMeal"; // <-- Import the EditMeal page
 import LunchPlans from "./Components/Pages/LunchPlans";
 import DinnerPlans from "./Components/Pages/DinnerPlans";
+import AddLunchPlans from "./Components/Pages/AddLunchPlan";
+import AddDinnerPlans from "./Components/Pages/AddDinnerPlan";
 
 const App = () => {
   const [user, setUser] = useState(() => auth.currentUser);
@@ -29,11 +31,13 @@ const App = () => {
       element: <Home />,
     },
     { path: "/login", element: <Login /> },
-    { path: "/add-meal", element: <AddMeal /> },
     { path: "/meals", element: <Meals /> },
+    { path: "/add-meal", element: <AddMeal /> },
     { path: "/edit-meal/:id", element: <EditMeal /> },
     { path: "/lunch-plans", element: <LunchPlans /> },
     { path: "/dinner-plans", element: <DinnerPlans /> },
+    { path: "/add-lunch-plan", element: <AddLunchPlans /> },
+    { path: "/add-dinner-plan", element: <AddDinnerPlans /> },
   ];
 
   const router = createBrowserRouter(routes);
