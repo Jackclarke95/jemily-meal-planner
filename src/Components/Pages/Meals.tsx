@@ -11,8 +11,8 @@ import { db } from "../../lib/firebase";
 import { useNavigate } from "react-router-dom";
 import Page from "../Page";
 import { Meal } from "../../Types/Meal";
-import { MealType } from "../../Types/MealType";
-import { MEAL_TYPE_LOOKUP } from "../../Utils/Consts/MEAL_TYPE_LOOKUP";
+import { MealTypeEnum, MealType } from "../../Types/MealType";
+import { MEAL_PLURAL_LOOKUP } from "../../Utils/Consts/MEAL_TYPE_LOOKUP";
 
 interface MealsProps {
   mealType: MealType;
@@ -53,7 +53,7 @@ const Meals: React.FC<MealsProps> = (props) => {
 
   useEffect(() => {
     setLoading(true);
-    const mealsRef = ref(db, MEAL_TYPE_LOOKUP[props.mealType]);
+    const mealsRef = ref(db, MEAL_PLURAL_LOOKUP[props.mealType]);
     const unsubscribe = onValue(mealsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
@@ -72,7 +72,7 @@ const Meals: React.FC<MealsProps> = (props) => {
       setLoading(false);
     });
     return () => unsubscribe();
-  }, [navigate]);
+  }, [props.mealType, navigate]);
 
   return (
     <Page title="Meals" backPath="/">
@@ -81,7 +81,13 @@ const Meals: React.FC<MealsProps> = (props) => {
           <PrimaryButton
             text="Add meal"
             iconProps={{ iconName: "Add" }}
-            onClick={() => navigate("/add-meal")}
+            onClick={() =>
+              navigate(
+                props.mealType === MealTypeEnum.Lunch
+                  ? "/add-lunch"
+                  : "/add-dinner"
+              )
+            }
           />
         </Stack>
         <ShimmeredDetailsList

@@ -1,6 +1,6 @@
-import { MealType } from "../../Types/MealType";
+import { MealTypeEnum, MealType } from "../../Types/MealType";
 
-export const MEAL_TYPE_LOOKUP: Record<MealType, string> = {
-  lunch: "lunches",
-  dinner: "dinners",
+export const MEAL_PLURAL_LOOKUP: Record<MealType, string> = {
+  [MealTypeEnum.Lunch]: "lunches",
+  [MealTypeEnum.Dinner]: "dinners",
 };

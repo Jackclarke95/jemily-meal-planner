@@ -7,8 +7,6 @@ import {
   DefaultButton,
   SharedColors,
   NeutralColors,
-  Dropdown, // Add this import
-  IDropdownOption,
   Separator,
 } from "@fluentui/react";
 import IngredientList from "./IngredientList";

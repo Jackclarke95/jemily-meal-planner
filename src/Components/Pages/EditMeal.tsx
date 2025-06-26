@@ -14,7 +14,7 @@ import {
   DefaultButton,
 } from "@fluentui/react";
 import { MealType } from "../../Types/MealType";
-import { MEAL_TYPE_LOOKUP } from "../../Utils/Consts/MEAL_TYPE_LOOKUP";
+import { MEAL_PLURAL_LOOKUP } from "../../Utils/Consts/MEAL_TYPE_LOOKUP";
 
 interface EditMealProps {
   mealType: MealType;
@@ -32,16 +32,13 @@ const EditMeal: React.FC<EditMealProps> = (props) => {
 
   useEffect(() => {
     if (!id || !props.mealType) return;
-    const mealRef = ref(
-      db,
-      `${props.mealType === "lunch" ? "lunches" : "dinners"}/${id}`
-    );
+    const mealRef = ref(db, `${MEAL_PLURAL_LOOKUP[props.mealType]}/${id}`);
     get(mealRef).then((snapshot) => {
       const data = snapshot.val() as Meal | null;
       if (data) {
         setInitialName(data.name || "");
         setInitialServings(data.servings || 2);
-        setInitialIngredients(data.ingredients || []);
+        setInitialIngredients(data.ingredients ?? []);
       }
     });
   }, [id, props.mealType]);
@@ -53,7 +50,7 @@ const EditMeal: React.FC<EditMealProps> = (props) => {
       ...meal,
       updatedAt: new Date().toISOString(),
     };
-    const path = props.mealType === "lunch" ? "lunches" : "dinners";
+    const path = MEAL_PLURAL_LOOKUP[props.mealType];
     const mealRef = ref(db, `${path}/${id}`);
     await update(mealRef, mealData);
   };
@@ -61,15 +58,18 @@ const EditMeal: React.FC<EditMealProps> = (props) => {
   // Delete handler with confirmation
   const deleteMealFromDb = async () => {
     if (!id || !props.mealType) return;
-    const path = props.mealType === "lunch" ? "lunches" : "dinners";
+    const path = MEAL_PLURAL_LOOKUP[props.mealType];
     const mealRef = ref(db, `${path}/${id}`);
     await remove(mealRef);
     setDeleteDialogOpen(false);
-    navigate(`/${MEAL_TYPE_LOOKUP[props.mealType]}`);
+    navigate(`/${MEAL_PLURAL_LOOKUP[props.mealType]}`);
   };
 
   return (
-    <Page title="Edit Meal" backPath={`/${MEAL_TYPE_LOOKUP[props.mealType]}`}>
+    <Page
+      title={`Edit ${props.mealType}`}
+      backPath={`/${MEAL_PLURAL_LOOKUP[props.mealType]}`}
+    >
       <MealForm
         initialName={initialName}
         initialServings={initialServings}

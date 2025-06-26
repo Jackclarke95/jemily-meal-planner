@@ -5,12 +5,13 @@ import MealForm from "../MealForm";
 import Page from "../Page";
 import { Meal } from "../../Types/Meal";
 import { MealType } from "../../Types/MealType";
+import { MEAL_PLURAL_LOOKUP } from "../../Utils/Consts/MEAL_TYPE_LOOKUP";
 
 interface AddMealProps {
   mealType: MealType;
 }
 
-const AddMeal: React.FC<AddMealProps> = ({ mealType }) => {
+const AddMeal: React.FC<AddMealProps> = (props) => {
   const [mealKey, setMealKey] = useState<string | null>(null);
 
   // Save handler for Add
@@ -20,21 +21,21 @@ const AddMeal: React.FC<AddMealProps> = ({ mealType }) => {
       ...meal,
       updatedAt: new Date().toISOString(),
     };
-    const path = mealType === "lunch" ? "lunches" : "dinners";
+    const path = MEAL_PLURAL_LOOKUP[props.mealType];
     if (!key) {
       const mealRef = ref(db, path);
       const newMealRef = push(mealRef);
       key = newMealRef.key!;
       setMealKey(key);
-      await set(newMealRef, mealData); // <-- Do NOT add id here
+      await set(newMealRef, mealData);
     } else {
       const mealRef = ref(db, `${path}/${key}`);
-      await update(mealRef, mealData); // <-- Do NOT add id here
+      await update(mealRef, mealData);
     }
   };
 
   return (
-    <Page title="Add Meal" backPath="/">
+    <Page title={`Add ${props.mealType}`} backPath="/">
       <MealForm onSave={saveMealToDb} saveOnFieldChange={true} />
     </Page>
   );
