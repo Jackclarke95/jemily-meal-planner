@@ -9,6 +9,7 @@ import {
   NeutralColors,
   Dropdown, // Add this import
   IDropdownOption,
+  Separator,
 } from "@fluentui/react";
 import IngredientList from "./IngredientList";
 import IngredientForm from "./IngredientForm";
@@ -150,7 +151,7 @@ const MealForm: React.FC<MealFormProps> = (props) => {
   };
 
   return (
-    <Stack tokens={{ childrenGap: 20 }}>
+    <Stack tokens={{ childrenGap: 10 }}>
       <Stack tokens={{ childrenGap: 12 }} style={{ maxWidth: 500 }}>
         <TextField label="Meal Name" value={name} onChange={handleNameChange} />
         <Dropdown
@@ -172,6 +173,7 @@ const MealForm: React.FC<MealFormProps> = (props) => {
         onEdit={openEditDialog}
         loading={loading}
       />
+      <Separator />
       <IngredientForm
         ingredients={ingredients}
         newIngredient={newIngredient}

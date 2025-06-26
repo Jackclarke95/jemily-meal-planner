@@ -7,11 +7,12 @@ import {
   Label,
   Icon,
   useTheme,
+  IconButton,
 } from "@fluentui/react";
 import EditIngredientDialog from "./EditIngredientDialog";
 import { Ingredient } from "../Types/Ingredient";
 import { INGREDIENT_UNIT_LOOKUP } from "../Utils/Consts/INGREDIENT_UNIT_LOOKUP";
-import { useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { ITextField } from "@fluentui/react";
 import { toTitleCase } from "../Utils/Helpers/ToTitleCase";
 
@@ -54,8 +55,24 @@ const IngredientForm: React.FC<IngredientSectionProps> = ({
   setEditIngredient,
   saveEditIngredient,
   closeEditDialog,
+  ingredients,
+  openEditDialog,
 }) => {
   const theme = useTheme();
+
+  // Collapsible state: expanded if no ingredients, collapsed otherwise
+  const [expanded, setExpanded] = useState(
+    !ingredients || ingredients.length === 0
+  );
+
+  // Update expanded state if ingredients prop changes (e.g., after loading in EditMeal)
+  useEffect(() => {
+    if (ingredients && ingredients.length > 0) {
+      setExpanded(false);
+    } else {
+      setExpanded(true);
+    }
+  }, [ingredients]);
 
   const nameInputRef = useRef<ITextField | null>(null);
 
@@ -87,90 +104,107 @@ const IngredientForm: React.FC<IngredientSectionProps> = ({
     <Stack
       style={{
         padding: "1rem",
-        border: "1px solid #ccc",
-        marginTop: "2rem",
       }}
       tokens={{ childrenGap: 16 }}
     >
-      <Text variant="large">Add new ingredient</Text>
-      <Stack tokens={{ childrenGap: 12 }}>
-        <TextField
-          label="Ingredient name"
-          value={newIngredient.name}
-          onChange={(_, v) =>
-            setNewIngredient({ ...newIngredient, name: toTitleCase(v || "") })
-          }
-          styles={{ root: { minWidth: 180 } }}
-          onKeyDown={handleKeyDown}
-          componentRef={nameInputRef}
-        />
-        <TextField
-          label="Quantity"
-          type="number"
-          value={newIngredient.quantity}
-          onChange={(_, v) =>
-            setNewIngredient({
-              ...newIngredient,
-              quantity: v?.replace(/[^0-9.]/g, "") || "",
-            })
-          }
-          styles={{ root: { minWidth: 120 } }}
-          onKeyDown={handleKeyDown}
-        />
-        <Stack horizontal verticalAlign="end">
-          <TextField
-            label="Unit"
-            value={newIngredient.unit}
-            onChange={(_, v) =>
-              setNewIngredient({ ...newIngredient, unit: v || "" })
-            }
-            styles={{ root: { minWidth: 120 } }}
-            onKeyDown={handleKeyDown}
-            onRenderLabel={(props) => (
-              <Stack horizontal verticalAlign="center">
-                <Label>{props?.label}</Label>
-                <TooltipHost content={`Available units: ${availableUnits}`}>
-                  <Icon
-                    iconName="Info"
-                    styles={{
-                      root: {
-                        marginLeft: 8,
-                        padding: 0,
-                        color: theme.palette.neutralSecondary,
-                      },
-                    }}
-                  />
-                </TooltipHost>
-              </Stack>
-            )}
-          />
-        </Stack>
-        <PrimaryButton
-          text="Add Ingredient"
-          onClick={() => {
-            if (isIngredientValid) {
-              setNewIngredient({
-                ...newIngredient,
-                name: toTitleCase(newIngredient.name),
-              });
-              addIngredient();
-              setTimeout(() => {
-                nameInputRef.current?.focus();
-              }, 0);
-            }
+      <Stack horizontal verticalAlign="center" tokens={{ childrenGap: 8 }}>
+        <IconButton
+          iconProps={{
+            iconName: expanded ? "ChevronDown" : "ChevronRight",
           }}
-          style={{ alignSelf: "end" }}
-          disabled={!isIngredientValid}
+          title={expanded ? "Collapse" : "Expand"}
+          ariaLabel={expanded ? "Collapse" : "Expand"}
+          onClick={() => setExpanded((prev) => !prev)}
         />
+        <Text variant="large" styles={{ root: { fontWeight: 600 } }}>
+          Add new ingredient
+        </Text>
       </Stack>
+      {expanded && (
+        <>
+          <Stack tokens={{ childrenGap: 12 }}>
+            <TextField
+              label="Ingredient name"
+              value={newIngredient.name}
+              onChange={(_, v) =>
+                setNewIngredient({
+                  ...newIngredient,
+                  name: toTitleCase(v || ""),
+                })
+              }
+              styles={{ root: { minWidth: 180 } }}
+              onKeyDown={handleKeyDown}
+              componentRef={nameInputRef}
+            />
+            <TextField
+              label="Quantity"
+              type="number"
+              value={newIngredient.quantity}
+              onChange={(_, v) =>
+                setNewIngredient({
+                  ...newIngredient,
+                  quantity: v?.replace(/[^0-9.]/g, "") || "",
+                })
+              }
+              styles={{ root: { minWidth: 120 } }}
+              onKeyDown={handleKeyDown}
+            />
+            <Stack horizontal verticalAlign="end">
+              <TextField
+                label="Unit"
+                value={newIngredient.unit}
+                onChange={(_, v) =>
+                  setNewIngredient({ ...newIngredient, unit: v || "" })
+                }
+                styles={{ root: { minWidth: 120 } }}
+                onKeyDown={handleKeyDown}
+                onRenderLabel={(props) => (
+                  <Stack horizontal verticalAlign="center">
+                    <Label>{props?.label}</Label>
+                    <TooltipHost content={`Available units: ${availableUnits}`}>
+                      <Icon
+                        iconName="Info"
+                        styles={{
+                          root: {
+                            marginLeft: 8,
+                            padding: 0,
+                            color: theme.palette.neutralSecondary,
+                          },
+                        }}
+                      />
+                    </TooltipHost>
+                  </Stack>
+                )}
+              />
+            </Stack>
+            <PrimaryButton
+              text="Add Ingredient"
+              onClick={() => {
+                if (isIngredientValid) {
+                  setNewIngredient({
+                    ...newIngredient,
+                    name: toTitleCase(newIngredient.name),
+                  });
+                  addIngredient();
+                  setTimeout(() => {
+                    nameInputRef.current?.focus();
+                  }, 0);
+                }
+              }}
+              style={{ alignSelf: "end" }}
+              disabled={!isIngredientValid}
+            />
+          </Stack>
 
-      <EditIngredientDialog
-        open={editDialogOpen}
-        ingredient={editIngredient}
-        onChange={setEditIngredient}
-        onSave={saveEditIngredient}
-        onCancel={closeEditDialog}
-      />
+          <EditIngredientDialog
+            open={editDialogOpen}
+            ingredient={editIngredient}
+            onChange={setEditIngredient}
+            onSave={saveEditIngredient}
+            onCancel={closeEditDialog}
+          />
+        </>
+      )}
     </Stack>
   );
 };

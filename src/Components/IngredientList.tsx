@@ -54,7 +54,9 @@ const IngredientList: React.FC<IngredientListProps> = (props) => {
 
   return (
     <Stack>
-      <Text variant="mediumPlus">Ingredients</Text>
+      <Text variant="large" styles={{ root: { marginBottom: "1rem" } }}>
+        Ingredients
+      </Text>
       <ShimmeredDetailsList
         items={props.ingredients}
         columns={columns.map((col) =>
