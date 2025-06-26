@@ -17,14 +17,12 @@ import EditIngredientDialog from "./EditIngredientDialog";
 import { INGREDIENT_UNIT_LOOKUP } from "../Utils/Consts/INGREDIENT_UNIT_LOOKUP";
 import { Ingredient } from "../Types/Ingredient";
 import { Meal } from "../Types/Meal";
-import { MealType } from "../Types/MealCategory";
 
 interface MealFormProps {
   initialName?: string;
   initialServings?: number;
   initialIngredients?: Ingredient[];
-  initialMealType?: "lunch" | "dinner"; // Add this prop
-  onSave: (meal: Meal & { mealType: "lunch" | "dinner" }) => Promise<void>;
+  onSave: (meal: Omit<Meal, "id">) => Promise<void>;
   onDelete?: (() => void) | (() => Promise<void>);
   saveOnFieldChange?: boolean;
 }
@@ -34,20 +32,12 @@ function normalizeUnit(unit: string): string {
   return INGREDIENT_UNIT_LOOKUP[cleaned] || unit;
 }
 
-const mealTypeOptions: IDropdownOption[] = [
-  { key: "lunch", text: "Lunch" },
-  { key: "dinner", text: "Dinner" },
-];
-
 const MealForm: React.FC<MealFormProps> = (props) => {
   const [name, setName] = useState(props.initialName ?? "");
   const [servings, setServings] = useState<number>(props.initialServings ?? 1);
   const [ingredients, setIngredients] = useState<Ingredient[]>(
     props.initialIngredients ?? []
   );
-  const [mealType, setMealType] = useState<"lunch" | "dinner">(
-    props.initialMealType ?? "dinner" // Default to "dinner"
-  ); // Add state
   const [newIngredient, setNewIngredient] = useState<Ingredient>({
     name: "",
     quantity: "",
@@ -60,7 +50,6 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     setName(props.initialName ?? "");
     setServings(props.initialServings ?? 1);
     setIngredients(props.initialIngredients ?? []);
-    setMealType(props.initialMealType ?? "dinner"); // Default to "dinner"
     // Only show shimmer if editing (props.initialIngredients is not empty)
     if (props.initialIngredients && props.initialIngredients.length > 0) {
       setLoading(true);
@@ -69,12 +58,7 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     } else {
       setLoading(false);
     }
-  }, [
-    props.initialName,
-    props.initialServings,
-    props.initialIngredients,
-    props.initialMealType,
-  ]);
+  }, [props.initialName, props.initialServings, props.initialIngredients]);
 
   // Edit dialog state
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -87,15 +71,12 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     name?: string;
     servings?: number;
     ingredients?: Ingredient[];
-    mealType?: MealType;
   }) => {
-    const meal: Omit<Meal, "id"> & { mealType: MealType } = {
+    const meal: Omit<Meal, "id"> = {
       name: (override?.name ?? name).trim() || "Untitled Meal",
       servings: override?.servings ?? servings,
       ingredients: override?.ingredients ?? ingredients,
-      mealType: override?.mealType ?? mealType,
     };
-    // @ts-ignore - onSave expects Meal, but id is not needed for DB
     await props.onSave(meal);
   };
 
@@ -154,13 +135,6 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     <Stack tokens={{ childrenGap: 10 }}>
       <Stack tokens={{ childrenGap: 12 }} style={{ maxWidth: 500 }}>
         <TextField label="Meal Name" value={name} onChange={handleNameChange} />
-        <Dropdown
-          label="Type"
-          options={mealTypeOptions}
-          selectedKey={mealType}
-          onChange={(_, option) => setMealType(option?.key as MealType)}
-          required
-        />
         <SpinButton
           label="Servings"
           value={servings?.toString() ?? ""}

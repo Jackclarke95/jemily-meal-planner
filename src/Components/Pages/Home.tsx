@@ -10,14 +10,26 @@ const Home: React.FC<HomePageProps> = () => {
       <Stack tokens={{ childrenGap: 20 }}>
         <Stack horizontal style={{ gap: "2rem" }}>
           <NavCard
-            title="Add Meal"
-            description="Create a new meal"
-            path={"/add-meal"}
+            title="Add Lunch"
+            description="Create a new lunch time meal"
+            path={"/add-lunch"}
           />
           <NavCard
-            title="View Meals"
-            description="Browse existing meals"
-            path={"/meals"}
+            title="Add Dinner"
+            description="Create a new dinner time meal"
+            path={"/add-dinner"}
+          />
+        </Stack>
+        <Stack horizontal style={{ gap: "2rem" }}>
+          <NavCard
+            title="Manage Lunches"
+            description="Manage lunch time meals"
+            path={"/lunches"}
+          />
+          <NavCard
+            title="Manage Dinners"
+            description="Manage dinner time meals"
+            path={"/dinners"}
           />
         </Stack>
         <Stack horizontal style={{ gap: "2rem" }}>

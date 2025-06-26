@@ -13,8 +13,14 @@ import {
   PrimaryButton,
   DefaultButton,
 } from "@fluentui/react";
+import { MealType } from "../../Types/MealType";
+import { MEAL_TYPE_LOOKUP } from "../../Utils/Consts/MEAL_TYPE_LOOKUP";
 
-const EditMeal: React.FC = () => {
+interface EditMealProps {
+  mealType: MealType;
+}
+
+const EditMeal: React.FC<EditMealProps> = (props) => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [initialName, setInitialName] = useState("");
@@ -25,41 +31,45 @@ const EditMeal: React.FC = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
-    if (!id) return;
-    const mealRef = ref(db, `meals/${id}`);
+    if (!id || !props.mealType) return;
+    const mealRef = ref(
+      db,
+      `${props.mealType === "lunch" ? "lunches" : "dinners"}/${id}`
+    );
     get(mealRef).then((snapshot) => {
       const data = snapshot.val() as Meal | null;
-
       if (data) {
         setInitialName(data.name || "");
         setInitialServings(data.servings || 2);
         setInitialIngredients(data.ingredients || []);
       }
     });
-  }, [id]);
+  }, [id, props.mealType]);
 
   // Save handler for Edit
-  const saveMealToDb = async (meal: Meal) => {
-    if (!id) return;
+  const saveMealToDb = async (meal: Omit<Meal, "id">) => {
+    if (!id || !props.mealType) return;
     const mealData = {
       ...meal,
       updatedAt: new Date().toISOString(),
     };
-    const mealRef = ref(db, `meals/${id}`);
+    const path = props.mealType === "lunch" ? "lunches" : "dinners";
+    const mealRef = ref(db, `${path}/${id}`);
     await update(mealRef, mealData);
   };
 
   // Delete handler with confirmation
   const deleteMealFromDb = async () => {
-    if (!id) return;
-    const mealRef = ref(db, `meals/${id}`);
+    if (!id || !props.mealType) return;
+    const path = props.mealType === "lunch" ? "lunches" : "dinners";
+    const mealRef = ref(db, `${path}/${id}`);
     await remove(mealRef);
     setDeleteDialogOpen(false);
-    navigate("/meals");
+    navigate(`/${MEAL_TYPE_LOOKUP[props.mealType]}`);
   };
 
   return (
-    <Page title="Edit Meal" backPath="/meals">
+    <Page title="Edit Meal" backPath={`/${MEAL_TYPE_LOOKUP[props.mealType]}`}>
       <MealForm
         initialName={initialName}
         initialServings={initialServings}

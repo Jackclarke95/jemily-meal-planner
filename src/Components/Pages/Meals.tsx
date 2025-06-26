@@ -11,8 +11,14 @@ import { db } from "../../lib/firebase";
 import { useNavigate } from "react-router-dom";
 import Page from "../Page";
 import { Meal } from "../../Types/Meal";
+import { MealType } from "../../Types/MealType";
+import { MEAL_TYPE_LOOKUP } from "../../Utils/Consts/MEAL_TYPE_LOOKUP";
 
-const Meals: React.FC = () => {
+interface MealsProps {
+  mealType: MealType;
+}
+
+const Meals: React.FC<MealsProps> = (props) => {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -20,7 +26,7 @@ const Meals: React.FC = () => {
   // Handler for row click
   const onRowClick = (item?: Meal) => {
     if (item && item.id) {
-      navigate(`/edit-meal/${item.id}`);
+      navigate(`/edit-${props.mealType}/${item.id}`);
     }
   };
 
@@ -43,36 +49,20 @@ const Meals: React.FC = () => {
         </div>
       ),
     },
-    {
-      key: "category",
-      name: "Category",
-      fieldName: "category",
-      minWidth: 100,
-      onRender: (item: Meal) => (
-        <div
-          style={{
-            textTransform: "capitalize",
-            textAlign: "center",
-            width: "100%",
-          }}
-        >
-          {item.mealType}
-        </div>
-      ),
-    },
   ];
 
   useEffect(() => {
     setLoading(true);
-    const mealsRef = ref(db, "meals");
+    const mealsRef = ref(db, MEAL_TYPE_LOOKUP[props.mealType]);
     const unsubscribe = onValue(mealsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         const mealList = Object.entries(data).map(
           ([id, meal]: [string, any]) => ({
             ...meal,
-            id, // Ensure id is present for navigation
+            id,
             key: id,
+            ingredients: meal.ingredients ?? [],
           })
         );
         setMeals(mealList);
