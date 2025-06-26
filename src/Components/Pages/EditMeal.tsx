@@ -1,18 +1,28 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { ref, get, update } from "firebase/database";
+import { useParams, useNavigate } from "react-router-dom";
+import { ref, get, update, remove } from "firebase/database";
 import { db } from "../../lib/firebase";
 import MealForm from "../MealForm";
 import Page from "../Page";
 import { Ingredient } from "../../Types/Ingredient";
 import { Meal } from "../../Types/Meal";
+import {
+  Dialog,
+  DialogType,
+  DialogFooter,
+  PrimaryButton,
+  DefaultButton,
+} from "@fluentui/react";
 
 const EditMeal: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [initialName, setInitialName] = useState("");
+  const [initialServings, setInitialServings] = useState(2);
   const [initialIngredients, setInitialIngredients] = useState<Ingredient[]>(
     []
   );
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -21,6 +31,7 @@ const EditMeal: React.FC = () => {
       const data = snapshot.val();
       if (data) {
         setInitialName(data.title || "");
+        setInitialServings(data.servings || 2);
         setInitialIngredients(data.ingredients || []);
       }
     });
@@ -37,14 +48,44 @@ const EditMeal: React.FC = () => {
     await update(mealRef, mealData);
   };
 
+  // Delete handler with confirmation
+  const deleteMealFromDb = async () => {
+    if (!id) return;
+    const mealRef = ref(db, `meals/${id}`);
+    await remove(mealRef);
+    setDeleteDialogOpen(false);
+    navigate("/meals");
+  };
+
   return (
     <Page title="Edit Meal" backPath="/meals">
       <MealForm
         initialName={initialName}
+        initialServings={initialServings}
         initialIngredients={initialIngredients}
         onSave={saveMealToDb}
+        onDelete={() => setDeleteDialogOpen(true)}
         saveOnFieldChange={false}
       />
+      <Dialog
+        hidden={!deleteDialogOpen}
+        onDismiss={() => setDeleteDialogOpen(false)}
+        dialogContentProps={{
+          type: DialogType.normal,
+          title: "Delete Meal",
+          closeButtonAriaLabel: "Close",
+          subText:
+            "Are you sure you want to delete this meal? This action cannot be undone.",
+        }}
+      >
+        <DialogFooter>
+          <PrimaryButton onClick={deleteMealFromDb} text="Delete" />
+          <DefaultButton
+            onClick={() => setDeleteDialogOpen(false)}
+            text="Cancel"
+          />
+        </DialogFooter>
+      </Dialog>
     </Page>
   );
 };

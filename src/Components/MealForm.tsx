@@ -1,5 +1,13 @@
 import { useState, useEffect } from "react";
-import { Stack, TextField, PrimaryButton, SpinButton } from "@fluentui/react";
+import {
+  Stack,
+  TextField,
+  PrimaryButton,
+  SpinButton,
+  DefaultButton,
+  SharedColors,
+  NeutralColors,
+} from "@fluentui/react";
 import IngredientList from "./IngredientList";
 import IngredientForm from "./IngredientSection";
 import EditIngredientDialog from "./EditIngredientDialog";
@@ -12,6 +20,7 @@ interface MealFormProps {
   initialServings?: number;
   initialIngredients?: Ingredient[];
   onSave: (meal: Meal) => Promise<void>;
+  onDelete?: (() => void) | (() => Promise<void>);
   saveOnFieldChange?: boolean;
 }
 
@@ -53,14 +62,14 @@ const MealForm: React.FC<MealFormProps> = (props) => {
   }) => {
     const meal: Meal = {
       id: override?.id ?? "",
-      name: override?.name ?? name,
+      name: (override?.name ?? name).trim() || "Untitled Meal",
       servings: override?.servings ?? servings,
       ingredients: override?.ingredients ?? ingredients,
     };
     await props.onSave(meal);
   };
 
-  // Add ingredient and save meal
+  // Add ingredient and save meal immediately
   const addIngredient = async () => {
     if (!newIngredient.name.trim()) return;
     const normalizedUnit = normalizeUnit(newIngredient.unit);
@@ -86,6 +95,7 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     setEditIndex(null);
   };
 
+  // Save ingredient edit and save meal immediately
   const saveEditIngredient = async () => {
     if (editIngredient && editIndex !== null && editIngredient.name.trim()) {
       const normalizedUnit = normalizeUnit(editIngredient.unit);
@@ -100,17 +110,14 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     closeEditDialog();
   };
 
-  // Save meal on name or servings change (optional)
-  // Only for AddMeal, not EditMeal
+  // Only update state for name/servings, do not auto-save
   const handleNameChange = (_: any, v?: string) => {
     setName(v || "");
-    if (props.saveOnFieldChange) handleSave({ name: v || "" });
   };
 
   const handleServingsChange = (_: any, v?: string) => {
     const num = v === undefined || v.trim() === "" ? 0 : Number(v);
     setServings(num);
-    if (props.saveOnFieldChange) handleSave({ servings: num });
   };
 
   return (
@@ -144,11 +151,37 @@ const MealForm: React.FC<MealFormProps> = (props) => {
         onSave={saveEditIngredient}
         onCancel={closeEditDialog}
       />
-      <PrimaryButton
-        text="Save Meal"
-        onClick={() => handleSave()}
-        style={{ marginTop: 24, width: 180 }}
-      />
+      <Stack horizontal tokens={{ childrenGap: 12 }}>
+        <PrimaryButton
+          text="Save Meal"
+          onClick={() => handleSave()}
+          style={{ marginTop: 24, width: 180 }}
+        />
+        {props.onDelete && (
+          <DefaultButton
+            text="Delete Meal"
+            onClick={props.onDelete}
+            style={{ marginTop: 24, width: 180 }}
+            styles={{
+              root: {
+                backgroundColor: SharedColors.red10, // Fluent UI redDark
+                color: NeutralColors.white,
+                borderColor: SharedColors.red10,
+              },
+              rootHovered: {
+                backgroundColor: SharedColors.red20, // Fluent UI redDarker
+                color: NeutralColors.white,
+                borderColor: SharedColors.red20,
+              },
+              rootPressed: {
+                backgroundColor: SharedColors.pinkRed10, // Even darker for pressed
+                color: NeutralColors.white,
+                borderColor: SharedColors.pinkRed10,
+              },
+            }}
+          />
+        )}
+      </Stack>
     </Stack>
   );
 };
