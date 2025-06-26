@@ -28,9 +28,10 @@ const EditMeal: React.FC = () => {
     if (!id) return;
     const mealRef = ref(db, `meals/${id}`);
     get(mealRef).then((snapshot) => {
-      const data = snapshot.val();
+      const data = snapshot.val() as Meal | null;
+
       if (data) {
-        setInitialName(data.title || "");
+        setInitialName(data.name || "");
         setInitialServings(data.servings || 2);
         setInitialIngredients(data.ingredients || []);
       }
