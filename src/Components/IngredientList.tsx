@@ -39,7 +39,7 @@ const IngredientList: React.FC<IngredientListProps> = (props) => {
     {
       key: "edit",
       name: "",
-      minWidth: 60,
+      minWidth: 30,
       isResizable: false,
       onRender: (item: Ingredient, index?: number) => (
         <IconButton
