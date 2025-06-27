@@ -91,7 +91,7 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
     },
     {
       key: "servings",
-      name: "Default Servings",
+      name: "Servings",
       fieldName: "servings",
       minWidth: 80,
       isResizable: true,
