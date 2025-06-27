@@ -28,7 +28,7 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
 
   // Fetch meals from db
   useEffect(() => {
-    const mealsRef = ref(db, props.mealType);
+    const mealsRef = ref(db, MEAL_PLURAL_LOOKUP[props.mealType]);
     const unsubscribe = onValue(mealsRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
@@ -115,6 +115,7 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
   // Save plan to db
   const savePlan = async () => {
     const planRef = ref(db, `${props.mealType}-plans"`);
+    console.log(planRef);
     const planData = selectedMeals.map((m) => ({
       id: m.id,
       servings: m.servings,
@@ -141,7 +142,7 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
         enableShimmer={loading}
         styles={{ root: { background: "#fff", borderRadius: 8, padding: 8 } }}
       />
-      <Label>Selected Meals & Servings:</Label>
+      <Label>Selected meals & servings:</Label>
       <Stack tokens={{ childrenGap: 8 }}>
         {selectedMeals.length === 0 && <Text>No meals selected</Text>}
         {selectedMeals.map((meal) => (
@@ -168,7 +169,7 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
       </Stack>
       <Label>Total servings in plan: {totalServings} / 14</Label>
       <PrimaryButton
-        text="Save Plan"
+        text="Save plan"
         onClick={savePlan}
         disabled={selectedMeals.length === 0 || totalServings < 14}
       />
