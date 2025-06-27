@@ -8,8 +8,7 @@ import Meals from "./Components/Pages/Meals";
 import EditMeal from "./Components/Pages/EditMeal";
 import LunchPlans from "./Components/Pages/LunchPlans";
 import DinnerPlans from "./Components/Pages/DinnerPlans";
-import AddLunchPlans from "./Components/Pages/AddLunchPlan";
-import AddDinnerPlans from "./Components/Pages/AddDinnerPlan";
+import AddMealPlan from "./Components/Pages/AddMealPlan";
 import { MealTypes } from "./Types/MealType";
 
 const App = () => {
@@ -46,8 +45,14 @@ const App = () => {
     },
     { path: "/lunch-plans", element: <LunchPlans /> },
     { path: "/dinner-plans", element: <DinnerPlans /> },
-    { path: "/add-lunch-plan", element: <AddLunchPlans /> },
-    { path: "/add-dinner-plan", element: <AddDinnerPlans /> },
+    {
+      path: "/add-lunch-plan",
+      element: <AddMealPlan mealType={MealTypes.Lunch} />,
+    },
+    {
+      path: "/add-dinner-plan",
+      element: <AddMealPlan mealType={MealTypes.Dinner} />,
+    },
   ];
 
   const router = createBrowserRouter(routes);

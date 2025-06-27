@@ -17,24 +17,13 @@ import { Meal } from "../Types/Meal";
 import { MEAL_PLURAL_LOOKUP } from "../Utils/Consts/MEAL_PLURAL_LOOKUP";
 import { MealType } from "../Types/MealType";
 
-interface PlanMeal {
-  id: string;
-  name: string;
-  servings: number;
-}
-
 interface MealPlanBuilderProps {
   mealType: MealType;
-  planDbPath: string;
-  title: string;
-  selectLabel: string;
-  noMealsText: string;
-  backPath?: string;
 }
 
 const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
   const [meals, setMeals] = useState<Meal[]>([]);
-  const [selectedMeals, setSelectedMeals] = useState<PlanMeal[]>([]);
+  const [selectedMeals, setSelectedMeals] = useState<Meal[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Fetch meals from db
@@ -70,6 +59,7 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
             id: meal.id,
             name: meal.name,
             servings: existing ? existing.servings : meal.servings ?? 2,
+            ingredients: meal.ingredients ?? [],
           };
         })
       );
@@ -124,7 +114,7 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
 
   // Save plan to db
   const savePlan = async () => {
-    const planRef = ref(db, props.planDbPath);
+    const planRef = ref(db, `${props.mealType}-plans"`);
     const planData = selectedMeals.map((m) => ({
       id: m.id,
       servings: m.servings,
@@ -141,7 +131,7 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
         14 servings total). Select meals above, then optionally adjust servings
         below.
       </Text>
-      <Label>{props.selectLabel}</Label>
+      <Label>No meals selected</Label>
       <ShimmeredDetailsList
         items={meals}
         columns={columns}
@@ -153,7 +143,7 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
       />
       <Label>Selected Meals & Servings:</Label>
       <Stack tokens={{ childrenGap: 8 }}>
-        {selectedMeals.length === 0 && <Text>{props.noMealsText}</Text>}
+        {selectedMeals.length === 0 && <Text>No meals selected</Text>}
         {selectedMeals.map((meal) => (
           <Stack
             horizontal

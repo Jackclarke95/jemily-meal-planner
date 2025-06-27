@@ -1,4 +1,4 @@
-export type MealType = "lunch" | "dinner";
+export type MealType = MealTypes.Lunch | MealTypes.Dinner;
 
 export enum MealTypes {
   Lunch = "lunch",
