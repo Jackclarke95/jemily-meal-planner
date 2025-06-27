@@ -16,6 +16,7 @@ import { db } from "../lib/firebase";
 import { Meal } from "../Types/Meal";
 import { MEAL_PLURAL_LOOKUP } from "../Utils/Consts/MEAL_PLURAL_LOOKUP";
 import { MealType } from "../Types/MealType";
+import { DAYS_OF_WEEK } from "../Utils/Consts/DAYS_OF_WEEK";
 
 interface MealPlanBuilderProps {
   mealType: MealType;
@@ -25,6 +26,17 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [selectedMeals, setSelectedMeals] = useState<Meal[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Per-day servings state, using DAYS_OF_WEEK
+  const [dayServings, setDayServings] = useState<{ [key: string]: number }>(
+    () => Object.fromEntries(DAYS_OF_WEEK.map((day) => [day, 2]))
+  );
+
+  // Calculate total required servings for the week
+  const totalRequiredServings = Object.values(dayServings).reduce(
+    (sum, val) => sum + val,
+    0
+  );
 
   // Fetch meals from db
   useEffect(() => {
@@ -114,25 +126,91 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
 
   // Save plan to db
   const savePlan = async () => {
-    const planRef = ref(db, `${props.mealType}-plans"`);
-    console.log(planRef);
+    const planRef = ref(db, `${props.mealType}-plans`);
     const planData = selectedMeals.map((m) => ({
       id: m.id,
       servings: m.servings,
     }));
-    await set(push(planRef), planData);
+    await set(push(planRef), {
+      days: dayServings,
+      meals: planData,
+    });
     setSelectedMeals([]);
     selection.setAllSelected(false);
   };
 
+  // Handler for per-day servings change
+  const handleDayServingsChange = (
+    day: string,
+    value: string | number | undefined
+  ) => {
+    const num = typeof value === "string" ? parseInt(value) : value;
+    setDayServings((prev) => ({
+      ...prev,
+      [day]: isNaN(num as number) ? 0 : (num as number),
+    }));
+  };
+
   return (
     <Stack tokens={{ childrenGap: 16 }} style={{ maxWidth: 700 }}>
-      <Text>
-        Select {MEAL_PLURAL_LOOKUP[props.mealType]} for the week (for 2 people,
-        14 servings total). Select meals above, then optionally adjust servings
-        below.
-      </Text>
-      <Label>No meals selected</Label>
+      <Stack tokens={{ childrenGap: 8 }} verticalAlign="center">
+        <Label styles={{ root: { minWidth: 120 } }}>Servings per day:</Label>
+        <Stack
+          horizontal
+          horizontalAlign="space-between"
+          tokens={{ childrenGap: 4 }}
+        >
+          {DAYS_OF_WEEK.map((day, idx) => {
+            const inputWidth = 32;
+            const totalWidth = inputWidth + 14;
+
+            return (
+              <Stack>
+                <Label styles={{ root: { minWidth: 30, textAlign: "center" } }}>
+                  {day[0].toUpperCase()}
+                </Label>
+                <SpinButton
+                  key={day}
+                  min={0}
+                  value={dayServings[day].toString()}
+                  onChange={(_, val) => handleDayServingsChange(day, val)}
+                  styles={{
+                    root: {
+                      width: totalWidth,
+                      minWidth: 0,
+                      maxWidth: totalWidth,
+                      marginRight: idx === DAYS_OF_WEEK.length - 1 ? 0 : 4,
+                      flexShrink: 1,
+                    },
+                    input: {
+                      padding: 0,
+                      width: inputWidth,
+                      minWidth: 0,
+                      maxWidth: inputWidth,
+                      textAlign: "center",
+                      fontSize: 13,
+                      flexShrink: 1,
+                    },
+                    spinButtonWrapper: {
+                      width: totalWidth,
+                      minWidth: 0,
+                      maxWidth: totalWidth,
+                      flexShrink: 1,
+                    },
+                    labelWrapper: { display: "flex", justifyContent: "center" },
+                  }}
+                  incrementButtonAriaLabel={`Increase servings for ${day}`}
+                  decrementButtonAriaLabel={`Decrease servings for ${day}`}
+                />
+              </Stack>
+            );
+          })}
+        </Stack>
+        <Text styles={{ root: { marginLeft: 16, fontWeight: 600 } }}>
+          Total needed: {totalRequiredServings}
+        </Text>
+      </Stack>
+
       <ShimmeredDetailsList
         items={meals}
         columns={columns}
@@ -167,11 +245,15 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
           </Stack>
         ))}
       </Stack>
-      <Label>Total servings in plan: {totalServings} / 14</Label>
+      <Label>
+        Total servings in plan: {totalServings} / {totalRequiredServings}
+      </Label>
       <PrimaryButton
         text="Save plan"
         onClick={savePlan}
-        disabled={selectedMeals.length === 0 || totalServings < 14}
+        disabled={
+          selectedMeals.length === 0 || totalServings < totalRequiredServings
+        }
       />
     </Stack>
   );
