@@ -6,10 +6,9 @@ import { createBrowserRouter, RouteObject, RouterProvider } from "react-router";
 import AddMeal from "./Components/Pages/AddMeal";
 import Meals from "./Components/Pages/Meals";
 import EditMeal from "./Components/Pages/EditMeal";
-import LunchPlans from "./Components/Pages/LunchPlans";
-import DinnerPlans from "./Components/Pages/DinnerPlans";
 import AddMealPlan from "./Components/Pages/AddMealPlan";
 import { MealTypes } from "./Types/MealType";
+import MealPlans from "./Components/Pages/MealPlans";
 
 const App = () => {
   const [user, setUser] = useState(() => auth.currentUser);
@@ -43,8 +42,11 @@ const App = () => {
       path: "/edit-dinner/:id",
       element: <EditMeal mealType={MealTypes.Dinner} />,
     },
-    { path: "/lunch-plans", element: <LunchPlans /> },
-    { path: "/dinner-plans", element: <DinnerPlans /> },
+    { path: "/lunch-plans", element: <MealPlans mealType={MealTypes.Lunch} /> },
+    {
+      path: "/dinner-plans",
+      element: <MealPlans mealType={MealTypes.Dinner} />,
+    },
     {
       path: "/add-lunch-plan",
       element: <AddMealPlan mealType={MealTypes.Lunch} />,

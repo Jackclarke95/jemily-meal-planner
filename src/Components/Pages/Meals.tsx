@@ -75,7 +75,7 @@ const Meals: React.FC<MealsProps> = (props) => {
   }, [props.mealType, navigate]);
 
   return (
-    <Page title="Meals" backPath="/">
+    <Page title={"Meals"} backPath="/">
       <Stack tokens={{ childrenGap: 24 }}>
         <Stack horizontal horizontalAlign="end">
           <PrimaryButton
