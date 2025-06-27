@@ -10,6 +10,9 @@ import {
   Selection,
   SelectionMode,
   SpinButton,
+  MessageBar,
+  MessageBarType,
+  IconButton, // Add this import
 } from "@fluentui/react";
 import { ref, onValue, push, set } from "firebase/database";
 import { db } from "../lib/firebase";
@@ -151,6 +154,9 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
     }));
   };
 
+  const spinButtonInputWidth = 32;
+  const spinButtonTotalWidth = spinButtonInputWidth + 14;
+
   return (
     <Stack tokens={{ childrenGap: 16 }} style={{ maxWidth: 700 }}>
       <Stack tokens={{ childrenGap: 8 }} verticalAlign="center">
@@ -161,9 +167,6 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
           tokens={{ childrenGap: 4 }}
         >
           {DAYS_OF_WEEK.map((day, idx) => {
-            const inputWidth = 32;
-            const totalWidth = inputWidth + 14;
-
             return (
               <Stack>
                 <Label styles={{ root: { minWidth: 30, textAlign: "center" } }}>
@@ -176,25 +179,25 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
                   onChange={(_, val) => handleDayServingsChange(day, val)}
                   styles={{
                     root: {
-                      width: totalWidth,
+                      width: spinButtonTotalWidth,
                       minWidth: 0,
-                      maxWidth: totalWidth,
+                      maxWidth: spinButtonTotalWidth,
                       marginRight: idx === DAYS_OF_WEEK.length - 1 ? 0 : 4,
                       flexShrink: 1,
                     },
                     input: {
                       padding: 0,
-                      width: inputWidth,
+                      width: spinButtonInputWidth,
                       minWidth: 0,
-                      maxWidth: inputWidth,
+                      maxWidth: spinButtonInputWidth,
                       textAlign: "center",
                       fontSize: 13,
                       flexShrink: 1,
                     },
                     spinButtonWrapper: {
-                      width: totalWidth,
+                      width: spinButtonTotalWidth,
                       minWidth: 0,
-                      maxWidth: totalWidth,
+                      maxWidth: spinButtonTotalWidth,
                       flexShrink: 1,
                     },
                     labelWrapper: { display: "flex", justifyContent: "center" },
@@ -229,30 +232,71 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
             key={meal.id}
             tokens={{ childrenGap: 8 }}
             verticalAlign="center"
+            styles={{ root: { alignItems: "center" } }}
           >
-            <Text style={{ minWidth: 180 }}>{meal.name}</Text>
-            <SpinButton
-              label="Servings"
-              min={1}
-              value={meal.servings.toString()}
-              onChange={(_, val) => updateServings(meal.id, Number(val) || 1)}
-              styles={{ root: { minWidth: 100 } }}
-            />
-            <DefaultButton
-              text="Remove"
-              onClick={() => removeFromPlan(meal.id)}
-            />
+            <Text style={{ flexGrow: 1, minWidth: 0 }}>{meal.name}</Text>
+            <Stack
+              horizontal
+              verticalAlign="center"
+              tokens={{ childrenGap: 4 }}
+              styles={{
+                root: {
+                  maxWidth: 120,
+                  justifyContent: "flex-end",
+                },
+              }} // Fixed width for controls
+            >
+              <SpinButton
+                min={1}
+                value={meal.servings.toString()}
+                onChange={(_, val) => updateServings(meal.id, Number(val) || 1)}
+                styles={{
+                  root: { minWidth: 50 },
+                  input: {
+                    padding: 0,
+                    width: spinButtonInputWidth,
+                    minWidth: 0,
+                    maxWidth: spinButtonInputWidth,
+                    textAlign: "center",
+                    fontSize: 13,
+                    flexShrink: 1,
+                  },
+                  spinButtonWrapper: {
+                    width: spinButtonTotalWidth,
+                    minWidth: 0,
+                    maxWidth: spinButtonTotalWidth,
+                    flexShrink: 1,
+                  },
+                }}
+              />
+              <IconButton
+                iconProps={{ iconName: "Delete" }}
+                title="Remove"
+                ariaLabel="Remove"
+                onClick={() => removeFromPlan(meal.id)}
+              />
+            </Stack>
           </Stack>
         ))}
       </Stack>
       <Label>
         Total servings in plan: {totalServings} / {totalRequiredServings}
       </Label>
+      {totalServings < totalRequiredServings && (
+        <MessageBar messageBarType={MessageBarType.warning}>
+          Not enough meals for required servings.
+        </MessageBar>
+      )}
+      {totalServings > totalRequiredServings && (
+        <MessageBar messageBarType={MessageBarType.warning}>
+          Too many meals selected for required servings.
+        </MessageBar>
+      )}
       <PrimaryButton
         text="Save plan"
         onClick={savePlan}
         disabled={
-          selectedMeals.length === 0 || totalServings < totalRequiredServings
+          selectedMeals.length === 0 || totalServings !== totalRequiredServings
         }
       />
     </Stack>
