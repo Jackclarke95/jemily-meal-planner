@@ -26,6 +26,7 @@ import { MealType } from "../Types/MealType";
 import { DAYS_OF_WEEK } from "../Utils/Consts/DAYS_OF_WEEK";
 import { MealPlan } from "../Types/MealPlan";
 import { collateIngredients } from "../Utils/Helpers/CollateIngredients";
+import CollatedIngredientsDialog from "./CollatedIngredientsDialog";
 
 interface MealPlanBuilderProps {
   mealType: MealType;
@@ -390,38 +391,13 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
         disabled={selectedMeals.length === 0}
       />
 
-      <Dialog
-        hidden={!ingredientsDialogOpen}
-        onDismiss={() => setIngredientsDialogOpen(false)}
-        dialogContentProps={{
-          type: DialogType.largeHeader,
-          title: "Collated Ingredients",
-        }}
-        minWidth={400}
-      >
-        {Object.keys(collatedIngredients).length === 0 ? (
-          <Text>No ingredients to display.</Text>
-        ) : (
-          <Stack tokens={{ childrenGap: 8 }}>
-            {Object.entries(collatedIngredients).map(([ingredient, units]) => (
-              <div key={ingredient}>
-                <b>{ingredient}</b>:{" "}
-                {Object.entries(units)
-                  .map(
-                    ([unit, qty]) => `${qty} ${unit}${unit !== "" ? "" : ""}`
-                  )
-                  .join(", ")}
-              </div>
-            ))}
-          </Stack>
-        )}
-        <DialogFooter>
-          <DefaultButton
-            onClick={() => setIngredientsDialogOpen(false)}
-            text="Close"
-          />
-        </DialogFooter>
-      </Dialog>
+      <CollatedIngredientsDialog
+        open={ingredientsDialogOpen}
+        onClose={() => setIngredientsDialogOpen(false)}
+        collatedIngredients={collatedIngredients}
+      />
+
+      {/* ...rest of your form... */}
     </Stack>
   );
 };
