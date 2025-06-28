@@ -11,7 +11,8 @@ import {
   SpinButton,
   MessageBar,
   MessageBarType,
-  IconButton, // Add this import
+  IconButton,
+  TextField,
 } from "@fluentui/react";
 import { ref, onValue, push, set } from "firebase/database";
 import { db } from "../lib/firebase";
@@ -19,6 +20,7 @@ import { Meal } from "../Types/Meal";
 import { MEAL_PLURAL_LOOKUP } from "../Utils/Consts/MEAL_PLURAL_LOOKUP";
 import { MealType } from "../Types/MealType";
 import { DAYS_OF_WEEK } from "../Utils/Consts/DAYS_OF_WEEK";
+import { MealPlan } from "../Types/MealPlan"; // Import MealPlan type
 
 interface MealPlanBuilderProps {
   mealType: MealType;
@@ -28,6 +30,7 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
   const [meals, setMeals] = useState<Meal[]>([]);
   const [selectedMeals, setSelectedMeals] = useState<Meal[]>([]);
   const [loading, setLoading] = useState(true);
+  const [planName, setPlanName] = useState("");
 
   // Per-day servings state, using DAYS_OF_WEEK
   const [dayServings, setDayServings] = useState<{ [key: string]: number }>(
@@ -126,18 +129,20 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
     if (idx !== -1) selection.setIndexSelected(idx, false, false);
   };
 
-  // Save plan to db
+  // Save plan to db using MealPlan type (without id field in the object)
   const savePlan = async () => {
     const planRef = ref(db, `${props.mealType}-plans`);
-    const planData = selectedMeals.map((m) => ({
-      id: m.id,
-      servings: m.servings,
-    }));
-    await set(push(planRef), {
-      days: dayServings,
-      meals: planData,
-    });
+    // Use the MealPlan type for the plan object (omit id, as it's the db key)
+    const planToSave: Omit<MealPlan, "id"> = {
+      name: planName,
+      meals: selectedMeals.map((m) => ({
+        id: m.id,
+        servings: m.servings,
+      })),
+    };
+    await set(push(planRef), planToSave);
     setSelectedMeals([]);
+    setPlanName("");
     selection.setAllSelected(false);
   };
 
@@ -158,6 +163,14 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
 
   return (
     <Stack tokens={{ childrenGap: 16 }} style={{ maxWidth: 700 }}>
+      {/* Add plan name field */}
+      <TextField
+        label="Meal plan name"
+        value={planName}
+        onChange={(_, val) => setPlanName(val || "")}
+        required
+        styles={{ root: { maxWidth: 350 } }}
+      />
       <Stack tokens={{ childrenGap: 8 }} verticalAlign="center">
         <Label styles={{ root: { minWidth: 120 } }}>Servings per day:</Label>
         <Stack
@@ -167,12 +180,11 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
         >
           {DAYS_OF_WEEK.map((day, idx) => {
             return (
-              <Stack>
+              <Stack key={day}>
                 <Label styles={{ root: { minWidth: 30, textAlign: "center" } }}>
                   {day[0].toUpperCase()}
                 </Label>
                 <SpinButton
-                  key={day}
                   min={0}
                   value={dayServings[day].toString()}
                   onChange={(_, val) => handleDayServingsChange(day, val)}
@@ -240,10 +252,11 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
               tokens={{ childrenGap: 4 }}
               styles={{
                 root: {
+                  minWidth: 110,
                   maxWidth: 120,
                   justifyContent: "flex-end",
                 },
-              }} // Fixed width for controls
+              }}
             >
               <SpinButton
                 min={1}
@@ -295,7 +308,9 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
         text="Save plan"
         onClick={savePlan}
         disabled={
-          selectedMeals.length === 0 || totalServings !== totalRequiredServings
+          !planName.trim() ||
+          selectedMeals.length === 0 ||
+          totalServings !== totalRequiredServings
         }
       />
     </Stack>
