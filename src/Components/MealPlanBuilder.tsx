@@ -192,16 +192,18 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
     if (mealPlan?.id) {
       // Update existing
       await set(ref(db, `${props.mealType}-plans/${mealPlan.id}`), planToSave);
+      // Do NOT reset state when editing
     } else {
       // Create new
       await set(push(planRef), planToSave);
+      // Reset state only when adding a new plan
+      setSelectedMeals([]);
+      setPlanName("");
+      selection.setAllSelected(false);
+      setDayServings(() =>
+        Object.fromEntries(DAYS_OF_WEEK.map((day) => [day, 2]))
+      );
     }
-    setSelectedMeals([]);
-    setPlanName("");
-    selection.setAllSelected(false);
-    setDayServings(() =>
-      Object.fromEntries(DAYS_OF_WEEK.map((day) => [day, 2]))
-    );
   };
 
   // Handler for per-day servings change
