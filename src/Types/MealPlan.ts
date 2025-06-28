@@ -5,4 +5,9 @@ export type MealPlan = {
     id: string;
     servings: number;
   }[];
+  servingsOverride: {
+    [day: string]: {
+      [mealType: string]: number;
+    };
+  };
 };

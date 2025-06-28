@@ -9,6 +9,7 @@ import EditMeal from "./Components/Pages/EditMeal";
 import AddMealPlan from "./Components/Pages/AddMealPlan";
 import { MealTypes } from "./Types/MealType";
 import MealPlans from "./Components/Pages/MealPlans";
+import EditMealPlan from "./Components/Pages/EditMealPlan";
 
 const App = () => {
   const [user, setUser] = useState(() => auth.currentUser);
@@ -54,6 +55,14 @@ const App = () => {
     {
       path: "/add-dinner-plan",
       element: <AddMealPlan mealType={MealTypes.Dinner} />,
+    },
+    {
+      path: "/edit-lunch-plan/:id",
+      element: <EditMealPlan mealType={MealTypes.Lunch} />,
+    },
+    {
+      path: "/edit-dinner-plan/:id",
+      element: <EditMealPlan mealType={MealTypes.Dinner} />,
     },
   ];
 

@@ -20,21 +20,34 @@ import { Meal } from "../Types/Meal";
 import { MEAL_PLURAL_LOOKUP } from "../Utils/Consts/MEAL_PLURAL_LOOKUP";
 import { MealType } from "../Types/MealType";
 import { DAYS_OF_WEEK } from "../Utils/Consts/DAYS_OF_WEEK";
-import { MealPlan } from "../Types/MealPlan"; // Import MealPlan type
+import { MealPlan } from "../Types/MealPlan";
 
 interface MealPlanBuilderProps {
   mealType: MealType;
+  mealPlan?: MealPlan; // <-- Add this
 }
 
 const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
+  const { mealPlan } = props;
+
   const [meals, setMeals] = useState<Meal[]>([]);
   const [selectedMeals, setSelectedMeals] = useState<Meal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [planName, setPlanName] = useState("");
+  const [planName, setPlanName] = useState(mealPlan?.name || "");
 
   // Per-day servings state, using DAYS_OF_WEEK
   const [dayServings, setDayServings] = useState<{ [key: string]: number }>(
-    () => Object.fromEntries(DAYS_OF_WEEK.map((day) => [day, 2]))
+    () => {
+      if (mealPlan && mealPlan.servingsOverride) {
+        return Object.fromEntries(
+          DAYS_OF_WEEK.map((day) => [
+            day,
+            mealPlan.servingsOverride?.[day]?.[props.mealType] ?? 2,
+          ])
+        );
+      }
+      return Object.fromEntries(DAYS_OF_WEEK.map((day) => [day, 2]));
+    }
   );
 
   // Calculate total required servings for the week
@@ -64,6 +77,37 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
     });
     return () => unsubscribe();
   }, [props.mealType]);
+
+  // Load plan data if editing or when meals are loaded
+  useEffect(() => {
+    if (mealPlan) {
+      setPlanName(mealPlan.name);
+      setSelectedMeals(
+        mealPlan.meals.map((m) => {
+          const found = meals.find((meal) => meal.id === m.id);
+          return {
+            id: m.id,
+            name: found?.name ?? "",
+            servings: m.servings,
+            ingredients: found?.ingredients ?? [],
+          };
+        })
+      );
+      setDayServings(
+        Object.fromEntries(
+          DAYS_OF_WEEK.map((day) => [
+            day,
+            mealPlan.servingsOverride?.[day]?.[props.mealType] ?? 2,
+          ])
+        )
+      );
+    } else {
+      setPlanName("");
+      setSelectedMeals([]);
+      setDayServings(Object.fromEntries(DAYS_OF_WEEK.map((day) => [day, 2])));
+    }
+    // eslint-disable-next-line
+  }, [mealPlan, meals, props.mealType]);
 
   // Selection for DetailsList
   const selection = new Selection({
@@ -132,18 +176,32 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
   // Save plan to db using MealPlan type (without id field in the object)
   const savePlan = async () => {
     const planRef = ref(db, `${props.mealType}-plans`);
-    // Use the MealPlan type for the plan object (omit id, as it's the db key)
     const planToSave: Omit<MealPlan, "id"> = {
       name: planName,
       meals: selectedMeals.map((m) => ({
         id: m.id,
         servings: m.servings,
       })),
+      servingsOverride: Object.fromEntries(
+        Object.entries(dayServings).map(([day, servings]) => [
+          day,
+          { [props.mealType]: servings },
+        ])
+      ),
     };
-    await set(push(planRef), planToSave);
+    if (mealPlan?.id) {
+      // Update existing
+      await set(ref(db, `${props.mealType}-plans/${mealPlan.id}`), planToSave);
+    } else {
+      // Create new
+      await set(push(planRef), planToSave);
+    }
     setSelectedMeals([]);
     setPlanName("");
     selection.setAllSelected(false);
+    setDayServings(() =>
+      Object.fromEntries(DAYS_OF_WEEK.map((day) => [day, 2]))
+    );
   };
 
   // Handler for per-day servings change
