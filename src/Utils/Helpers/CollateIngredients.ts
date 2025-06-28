@@ -23,7 +23,7 @@ export function collateIngredients(meals: Meal[]): {
       if (ingredientMap[nameKey][unitKey]) {
         ingredientMap[nameKey][unitKey] += Number(ingredient.quantity);
       } else {
-        ingredientMap[nameKey][unitKey] += Number(ingredient.quantity);
+        ingredientMap[nameKey][unitKey] = Number(ingredient.quantity);
       }
     });
   });

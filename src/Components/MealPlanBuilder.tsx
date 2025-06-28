@@ -13,6 +13,10 @@ import {
   MessageBarType,
   IconButton,
   TextField,
+  DefaultButton,
+  Dialog,
+  DialogType,
+  DialogFooter,
 } from "@fluentui/react";
 import { ref, onValue, push, set } from "firebase/database";
 import { db } from "../lib/firebase";
@@ -21,10 +25,11 @@ import { MEAL_PLURAL_LOOKUP } from "../Utils/Consts/MEAL_PLURAL_LOOKUP";
 import { MealType } from "../Types/MealType";
 import { DAYS_OF_WEEK } from "../Utils/Consts/DAYS_OF_WEEK";
 import { MealPlan } from "../Types/MealPlan";
+import { collateIngredients } from "../Utils/Helpers/CollateIngredients";
 
 interface MealPlanBuilderProps {
   mealType: MealType;
-  mealPlan?: MealPlan; // <-- Add this
+  mealPlan?: MealPlan;
 }
 
 const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
@@ -221,6 +226,11 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
   const spinButtonInputWidth = 32;
   const spinButtonTotalWidth = spinButtonInputWidth + 14;
 
+  // Collate ingredients for selected meals
+  const collatedIngredients = collateIngredients(selectedMeals);
+
+  const [ingredientsDialogOpen, setIngredientsDialogOpen] = useState(false);
+
   return (
     <Stack tokens={{ childrenGap: 16 }} style={{ maxWidth: 700 }}>
       {/* Add plan name field */}
@@ -373,6 +383,45 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
           totalServings !== totalRequiredServings
         }
       />
+      <DefaultButton
+        text="Show Collated Ingredients"
+        onClick={() => setIngredientsDialogOpen(true)}
+        styles={{ root: { marginBottom: 8, width: 220 } }}
+        disabled={selectedMeals.length === 0}
+      />
+
+      <Dialog
+        hidden={!ingredientsDialogOpen}
+        onDismiss={() => setIngredientsDialogOpen(false)}
+        dialogContentProps={{
+          type: DialogType.largeHeader,
+          title: "Collated Ingredients",
+        }}
+        minWidth={400}
+      >
+        {Object.keys(collatedIngredients).length === 0 ? (
+          <Text>No ingredients to display.</Text>
+        ) : (
+          <Stack tokens={{ childrenGap: 8 }}>
+            {Object.entries(collatedIngredients).map(([ingredient, units]) => (
+              <div key={ingredient}>
+                <b>{ingredient}</b>:{" "}
+                {Object.entries(units)
+                  .map(
+                    ([unit, qty]) => `${qty} ${unit}${unit !== "" ? "" : ""}`
+                  )
+                  .join(", ")}
+              </div>
+            ))}
+          </Stack>
+        )}
+        <DialogFooter>
+          <DefaultButton
+            onClick={() => setIngredientsDialogOpen(false)}
+            text="Close"
+          />
+        </DialogFooter>
+      </Dialog>
     </Stack>
   );
 };
