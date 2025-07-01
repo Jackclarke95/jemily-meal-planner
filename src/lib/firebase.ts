@@ -1,7 +1,7 @@
 // Import Firebase functions
-import { initializeApp } from 'firebase/app';
-import { getAuth, connectAuthEmulator } from 'firebase/auth';
-import { getDatabase, connectDatabaseEmulator } from 'firebase/database';
+import { initializeApp } from "firebase/app";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getDatabase, connectDatabaseEmulator } from "firebase/database";
 
 // Your web app's Firebase configuration (from .env or hosting config)
 const firebaseConfig = {
@@ -20,12 +20,9 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 
 // 💡 Only connect to emulators if running locally
-if (
-  typeof window !== 'undefined' &&
-  window.location.hostname === 'localhost'
-) {
-  connectAuthEmulator(auth, 'http://localhost:9099');
-  connectDatabaseEmulator(db, 'localhost', 9000);
+if (typeof window !== "undefined" && window.location.hostname === "localhost") {
+  connectAuthEmulator(auth, "http://localhost:9099");
+  connectDatabaseEmulator(db, "localhost", 9001);
 }
 
 export { app, auth, db };

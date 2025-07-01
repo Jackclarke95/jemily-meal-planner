@@ -14,7 +14,7 @@
       "port": 9099
     },
     "database": {
-      "port": 9000,
+      "port": 9001,
       "storage": "./local_db_data"
     },
     "ui": {

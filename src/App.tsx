@@ -21,9 +21,9 @@ const App = () => {
     return unsubscribe;
   }, []);
 
-  if (!user) {
-    return <Login />;
-  }
+  // if (!user) {
+  //   return <Login />;
+  // }
 
   const routes: RouteObject[] = [
     {
