@@ -25,6 +25,10 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "dev:local": "react-scripts start",
+    "start:local": "concurrently \"npm run dev:local\" \"npm run emulators\"",
+    "start:production": "npm run dev:prod",
+    "emulators": "firebase emulators:start --only auth,database --project jemily-meal-planner",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -48,6 +52,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react-router-dom": "^5.3.3"
+    "@types/react-router-dom": "^5.3.3",
+    "concurrently": "^9.2.0"
   }
 }
