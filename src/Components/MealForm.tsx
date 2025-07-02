@@ -18,6 +18,7 @@ import { Ingredient } from "../Types/Ingredient";
 import { Meal } from "../Types/Meal";
 import { get, push, ref } from "firebase/database";
 import { db } from "../lib/firebase";
+import { toTitleCase } from "../Utils/Helpers/ToTitleCase";
 
 interface MealFormProps {
   initialName?: string;
@@ -93,17 +94,22 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     tagList: ITag[] | undefined
   ): ITag[] => {
     if (!filterText || !tagList) return [];
-    const filtered = availableTags.filter(
-      (tag) =>
-        tag.name.toLowerCase().indexOf(filterText.toLowerCase()) === 0 &&
-        !tagList.some((t) => t.key === tag.key)
-    );
+    const filtered = availableTags
+      .filter(
+        (tag) =>
+          tag.name.toLowerCase().indexOf(filterText.toLowerCase()) === 0 &&
+          !tagList.some((t) => t.key === tag.key)
+      )
+      .map((tag) => ({
+        ...tag,
+        name: toTitleCase(tag.name),
+      }));
     // If not found, allow creation
     if (
       filtered.length === 0 &&
       !tagList.some((t) => t.name.toLowerCase() === filterText.toLowerCase())
     ) {
-      return [{ key: filterText, name: filterText }];
+      return [{ key: filterText, name: toTitleCase(filterText) }];
     }
     return filtered;
   };
