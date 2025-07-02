@@ -7,11 +7,9 @@ import {
   DefaultButton,
   SharedColors,
   NeutralColors,
-  Separator,
   IconButton,
 } from "@fluentui/react";
 import IngredientList from "./IngredientList";
-import IngredientForm from "./IngredientForm";
 import EditIngredientDialog from "./EditIngredientDialog";
 import { INGREDIENT_UNIT_LOOKUP } from "../Utils/Consts/INGREDIENT_UNIT_LOOKUP";
 import { Ingredient } from "../Types/Ingredient";
@@ -37,11 +35,7 @@ const MealForm: React.FC<MealFormProps> = (props) => {
   const [ingredients, setIngredients] = useState<Ingredient[]>(
     props.initialIngredients ?? []
   );
-  const [newIngredient, setNewIngredient] = useState<Ingredient>({
-    name: "",
-    quantity: "",
-    unit: "",
-  });
+
   const [loading, setLoading] = useState(false);
 
   // Sync state with props if the meal changes (e.g., when editing a different meal)
