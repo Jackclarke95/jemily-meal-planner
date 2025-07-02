@@ -8,6 +8,7 @@ import {
   SharedColors,
   NeutralColors,
   Separator,
+  IconButton,
 } from "@fluentui/react";
 import IngredientList from "./IngredientList";
 import IngredientForm from "./IngredientForm";
@@ -62,6 +63,7 @@ const MealForm: React.FC<MealFormProps> = (props) => {
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editIngredient, setEditIngredient] = useState<Ingredient | null>(null);
   const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [isAddMode, setIsAddMode] = useState(false);
 
   // Save handler
   const handleSave = async (override?: {
@@ -78,23 +80,43 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     await props.onSave(meal);
   };
 
-  // Add ingredient and save meal immediately
-  const addIngredient = async () => {
-    if (!newIngredient.name.trim()) return;
-    const normalizedUnit = normalizeUnit(newIngredient.unit);
-    const updatedIngredients = [
-      ...ingredients,
-      { ...newIngredient, unit: normalizedUnit },
-    ];
+  // Add ingredient via dialog
+  const handleAddIngredientClick = () => {
+    setEditIngredient({ name: "", quantity: "", unit: "" });
+    setEditIndex(null);
+    setIsAddMode(true);
+    setEditDialogOpen(true);
+  };
+
+  // Add or edit ingredient and save meal immediately
+  const saveEditIngredient = async () => {
+    if (!editIngredient || !editIngredient.name.trim()) {
+      setEditDialogOpen(false);
+      return;
+    }
+    const normalizedUnit = normalizeUnit(editIngredient.unit);
+    let updatedIngredients = [...ingredients];
+    if (isAddMode) {
+      updatedIngredients.push({ ...editIngredient, unit: normalizedUnit });
+    } else if (editIndex !== null) {
+      updatedIngredients[editIndex] = {
+        ...editIngredient,
+        unit: normalizedUnit,
+      };
+    }
     setIngredients(updatedIngredients);
-    setNewIngredient({ name: "", quantity: "", unit: "" });
     await handleSave({ ingredients: updatedIngredients });
+    setEditDialogOpen(false);
+    setIsAddMode(false);
+    setEditIngredient(null);
+    setEditIndex(null);
   };
 
   // Edit handlers
   const openEditDialog = (ingredient: Ingredient, index: number) => {
     setEditIngredient({ ...ingredient });
     setEditIndex(index);
+    setIsAddMode(false);
     setEditDialogOpen(true);
   };
 
@@ -102,21 +124,7 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     setEditDialogOpen(false);
     setEditIngredient(null);
     setEditIndex(null);
-  };
-
-  // Save ingredient edit and save meal immediately
-  const saveEditIngredient = async () => {
-    if (editIngredient && editIndex !== null && editIngredient.name.trim()) {
-      const normalizedUnit = normalizeUnit(editIngredient.unit);
-      const updatedIngredients = [...ingredients];
-      updatedIngredients[editIndex] = {
-        ...editIngredient,
-        unit: normalizedUnit,
-      };
-      setIngredients(updatedIngredients);
-      await handleSave({ ingredients: updatedIngredients });
-    }
-    closeEditDialog();
+    setIsAddMode(false);
   };
 
   // Only update state for name/servings, do not auto-save
@@ -140,23 +148,27 @@ const MealForm: React.FC<MealFormProps> = (props) => {
         />
       </Stack>
 
+      {/* Ingredient header with Add button */}
+      <Stack
+        horizontal
+        horizontalAlign="space-between"
+        verticalAlign="center"
+        style={{ marginTop: 24, marginBottom: 8 }}
+      >
+        <span style={{ fontWeight: 600, fontSize: 18 }}>Ingredients</span>
+        <IconButton
+          iconProps={{ iconName: "Add" }}
+          title="Add Ingredient"
+          ariaLabel="Add Ingredient"
+          onClick={handleAddIngredientClick}
+          styles={{ root: { marginLeft: "auto" } }}
+        />
+      </Stack>
+
       <IngredientList
         ingredients={ingredients}
         onEdit={openEditDialog}
         loading={loading}
-      />
-      <Separator />
-      <IngredientForm
-        ingredients={ingredients}
-        newIngredient={newIngredient}
-        setNewIngredient={setNewIngredient}
-        addIngredient={addIngredient}
-        openEditDialog={openEditDialog}
-        editDialogOpen={editDialogOpen}
-        editIngredient={editIngredient}
-        setEditIngredient={setEditIngredient}
-        saveEditIngredient={saveEditIngredient}
-        closeEditDialog={closeEditDialog}
       />
 
       <EditIngredientDialog
@@ -166,6 +178,7 @@ const MealForm: React.FC<MealFormProps> = (props) => {
         onSave={saveEditIngredient}
         onCancel={closeEditDialog}
       />
+
       <Stack horizontal tokens={{ childrenGap: 12 }}>
         <PrimaryButton
           text="Save Meal"
@@ -179,17 +192,17 @@ const MealForm: React.FC<MealFormProps> = (props) => {
             style={{ marginTop: 24, width: 180 }}
             styles={{
               root: {
-                backgroundColor: SharedColors.red10, // Fluent UI redDark
+                backgroundColor: SharedColors.red10,
                 color: NeutralColors.white,
                 borderColor: SharedColors.red10,
               },
               rootHovered: {
-                backgroundColor: SharedColors.red20, // Fluent UI redDarker
+                backgroundColor: SharedColors.red20,
                 color: NeutralColors.white,
                 borderColor: SharedColors.red20,
               },
               rootPressed: {
-                backgroundColor: SharedColors.pinkRed10, // Even darker for pressed
+                backgroundColor: SharedColors.pinkRed10,
                 color: NeutralColors.white,
                 borderColor: SharedColors.pinkRed10,
               },
