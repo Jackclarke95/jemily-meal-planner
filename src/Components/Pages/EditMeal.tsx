@@ -28,6 +28,7 @@ const EditMeal: React.FC<EditMealProps> = (props) => {
   const [initialIngredients, setInitialIngredients] = useState<Ingredient[]>(
     []
   );
+  const [initialTags, setInitialTags] = useState<string[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -39,6 +40,7 @@ const EditMeal: React.FC<EditMealProps> = (props) => {
         setInitialName(data.name || "");
         setInitialServings(data.servings || 2);
         setInitialIngredients(data.ingredients ?? []);
+        setInitialTags(data.tags ?? []);
       }
     });
   }, [id, props.mealType]);
@@ -74,6 +76,7 @@ const EditMeal: React.FC<EditMealProps> = (props) => {
         initialName={initialName}
         initialServings={initialServings}
         initialIngredients={initialIngredients}
+        initialTags={initialTags}
         onSave={saveMealToDb}
         onDelete={() => setDeleteDialogOpen(true)}
         saveOnFieldChange={false}

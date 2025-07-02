@@ -16,6 +16,8 @@ import EditIngredientDialog from "./EditIngredientDialog";
 import { INGREDIENT_UNIT_LOOKUP } from "../Utils/Consts/INGREDIENT_UNIT_LOOKUP";
 import { Ingredient } from "../Types/Ingredient";
 import { Meal } from "../Types/Meal";
+import { push, ref } from "firebase/database";
+import { db } from "../lib/firebase";
 
 interface MealFormProps {
   initialName?: string;
@@ -105,13 +107,15 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     const newTags = items.filter(
       (t) => !availableTags.some((at) => at.key === t.key)
     );
+    const mealTagsRef = ref(db, "meal-tags");
+
     for (const tag of newTags) {
-      // Save to DB
-      await fetch("/meal-tags", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ tag: tag.name }),
-      });
+      if (availableTags.some((t) => t.key === tag.key)) {
+        continue;
+      } else {
+        push(mealTagsRef, { tag: tag.name });
+      }
+
       setAvailableTags((prev) => [...prev, tag]);
     }
     setSelectedTags(items);
@@ -135,11 +139,7 @@ const MealForm: React.FC<MealFormProps> = (props) => {
       name: (override?.name ?? name).trim() || "Untitled Meal",
       servings: override?.servings ?? servings,
       ingredients: override?.ingredients ?? ingredients,
-      tags: override?.tags
-        ? override.tags.map((t) =>
-            typeof t === "string" ? { key: t, name: t } : t
-          )
-        : selectedTags,
+      tags: override?.tags ? override.tags : selectedTags.map((t) => t.name),
     };
     await props.onSave(meal);
   };

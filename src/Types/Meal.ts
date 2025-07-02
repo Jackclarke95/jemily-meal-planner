@@ -6,5 +6,5 @@ export interface Meal {
   name: string;
   servings: number;
   ingredients: Ingredient[];
-  tags: ITag[];
+  tags: string[];
 }
