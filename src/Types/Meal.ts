@@ -7,4 +7,5 @@ export interface Meal {
   servings: number;
   ingredients: Ingredient[];
   tags: string[];
+  calories?: number;
 }

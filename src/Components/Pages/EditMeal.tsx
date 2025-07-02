@@ -32,10 +32,15 @@ const EditMeal: React.FC<EditMealProps> = (props) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
-    if (!id || !props.mealType) return;
+    if (!id || !props.mealType) {
+      return;
+    }
+
     const mealRef = ref(db, `${MEAL_PLURAL_LOOKUP[props.mealType]}/${id}`);
+
     get(mealRef).then((snapshot) => {
       const data = snapshot.val() as Meal | null;
+
       if (data) {
         setInitialName(data.name || "");
         setInitialServings(data.servings || 2);
@@ -49,8 +54,7 @@ const EditMeal: React.FC<EditMealProps> = (props) => {
   const saveMealToDb = async (meal: Omit<Meal, "id">) => {
     if (!id || !props.mealType) return;
     const mealData = {
-      ...meal,
-      updatedAt: new Date().toISOString(),
+      meal,
     };
     const path = MEAL_PLURAL_LOOKUP[props.mealType];
     const mealRef = ref(db, `${path}/${id}`);

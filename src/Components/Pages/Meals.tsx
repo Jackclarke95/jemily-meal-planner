@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Stack,
-  ShimmeredDetailsList,
-  IColumn,
-  SelectionMode,
-  PrimaryButton,
-} from "@fluentui/react";
+import { Stack, IColumn, PrimaryButton } from "@fluentui/react";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../lib/firebase";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +7,7 @@ import Page from "../Page";
 import { Meal } from "../../Types/Meal";
 import { MealTypes, MealType } from "../../Types/MealType";
 import { MEAL_PLURAL_LOOKUP } from "../../Utils/Consts/MEAL_PLURAL_LOOKUP";
+import MealCard from "../MealCard";
 
 interface MealsProps {
   mealType: MealType;
@@ -29,27 +24,6 @@ const Meals: React.FC<MealsProps> = (props) => {
       navigate(`/edit-${props.mealType}/${item.id}`);
     }
   };
-
-  const columns: IColumn[] = [
-    {
-      key: "name",
-      name: "Name",
-      fieldName: "name",
-      minWidth: 120,
-      isResizable: true,
-    },
-    {
-      key: "servings",
-      name: "Servings",
-      fieldName: "servings",
-      minWidth: 80,
-      onRender: (item: Meal) => (
-        <div style={{ textAlign: "center", width: "100%" }}>
-          {item.servings}
-        </div>
-      ),
-    },
-  ];
 
   useEffect(() => {
     setLoading(true);
@@ -76,7 +50,7 @@ const Meals: React.FC<MealsProps> = (props) => {
 
   return (
     <Page title={"Meals"} backPath="/">
-      <Stack tokens={{ childrenGap: 24 }}>
+      <Stack tokens={{ childrenGap: 24 }} styles={{ root: { width: "100%" } }}>
         <Stack horizontal horizontalAlign="end">
           <PrimaryButton
             text="Add meal"
@@ -90,15 +64,9 @@ const Meals: React.FC<MealsProps> = (props) => {
             }
           />
         </Stack>
-        <ShimmeredDetailsList
-          items={meals}
-          columns={columns}
-          setKey="set"
-          selectionMode={SelectionMode.none}
-          styles={{ root: { background: "#fff", borderRadius: 8, padding: 8 } }}
-          onActiveItemChanged={onRowClick}
-          enableShimmer={loading}
-        />
+        {meals.length !== 0 &&
+          !loading &&
+          meals.map((meal) => <MealCard meal={meal} key={meal.id} />)}
       </Stack>
     </Page>
   );
