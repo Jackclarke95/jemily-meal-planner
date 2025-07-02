@@ -1,3 +1,4 @@
+import { ITag } from "@fluentui/react";
 import { Ingredient } from "./Ingredient";
 
 export interface Meal {
@@ -5,4 +6,5 @@ export interface Meal {
   name: string;
   servings: number;
   ingredients: Ingredient[];
+  tags: ITag[];
 }

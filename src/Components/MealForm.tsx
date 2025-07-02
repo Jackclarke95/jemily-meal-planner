@@ -5,9 +5,11 @@ import {
   PrimaryButton,
   SpinButton,
   DefaultButton,
+  ITag,
   SharedColors,
   NeutralColors,
   IconButton,
+  TagPicker,
 } from "@fluentui/react";
 import IngredientList from "./IngredientList";
 import EditIngredientDialog from "./EditIngredientDialog";
@@ -19,6 +21,7 @@ interface MealFormProps {
   initialName?: string;
   initialServings?: number;
   initialIngredients?: Ingredient[];
+  initialTags?: string[];
   onSave: (meal: Omit<Meal, "id">) => Promise<void>;
   onDelete?: (() => void) | (() => Promise<void>);
   saveOnFieldChange?: boolean;
@@ -35,6 +38,10 @@ const MealForm: React.FC<MealFormProps> = (props) => {
   const [ingredients, setIngredients] = useState<Ingredient[]>(
     props.initialIngredients ?? []
   );
+  const [availableTags, setAvailableTags] = useState<ITag[]>([]);
+  const [selectedTags, setSelectedTags] = useState<ITag[]>(
+    (props.initialTags ?? []).map((t) => ({ key: t, name: t }))
+  );
 
   const [loading, setLoading] = useState(false);
 
@@ -43,6 +50,9 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     setName(props.initialName ?? "");
     setServings(props.initialServings ?? 1);
     setIngredients(props.initialIngredients ?? []);
+    setSelectedTags(
+      (props.initialTags ?? []).map((t) => ({ key: t, name: t }))
+    );
     // Only show shimmer if editing (props.initialIngredients is not empty)
     if (props.initialIngredients && props.initialIngredients.length > 0) {
       setLoading(true);
@@ -51,7 +61,61 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     } else {
       setLoading(false);
     }
-  }, [props.initialName, props.initialServings, props.initialIngredients]);
+  }, [
+    props.initialName,
+    props.initialServings,
+    props.initialIngredients,
+    props.initialTags,
+  ]);
+
+  // Fetch tags from /meal-tags
+  useEffect(() => {
+    fetch("/meal-tags")
+      .then((res) => res.json())
+      .then((tags: string[]) =>
+        setAvailableTags(tags.map((t) => ({ key: t, name: t })))
+      );
+  }, []);
+
+  // Helper: filter tags for picker
+  const filterTags = (
+    filterText: string,
+    tagList: ITag[] | undefined
+  ): ITag[] => {
+    if (!filterText || !tagList) return [];
+    const filtered = availableTags.filter(
+      (tag) =>
+        tag.name.toLowerCase().indexOf(filterText.toLowerCase()) === 0 &&
+        !tagList.some((t) => t.key === tag.key)
+    );
+    // If not found, allow creation
+    if (
+      filtered.length === 0 &&
+      !tagList.some((t) => t.name.toLowerCase() === filterText.toLowerCase())
+    ) {
+      return [{ key: filterText, name: filterText }];
+    }
+    return filtered;
+  };
+
+  // Handle tag selection (create new tag if needed)
+  const onTagChange = async (items?: ITag[]) => {
+    if (!items) return setSelectedTags([]);
+    // Find new tags not in availableTags
+    const newTags = items.filter(
+      (t) => !availableTags.some((at) => at.key === t.key)
+    );
+    for (const tag of newTags) {
+      // Save to DB
+      await fetch("/meal-tags", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tag: tag.name }),
+      });
+      setAvailableTags((prev) => [...prev, tag]);
+    }
+    setSelectedTags(items);
+  };
 
   // Edit dialog state
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -65,11 +129,17 @@ const MealForm: React.FC<MealFormProps> = (props) => {
     name?: string;
     servings?: number;
     ingredients?: Ingredient[];
+    tags?: string[];
   }) => {
     const meal: Omit<Meal, "id"> = {
       name: (override?.name ?? name).trim() || "Untitled Meal",
       servings: override?.servings ?? servings,
       ingredients: override?.ingredients ?? ingredients,
+      tags: override?.tags
+        ? override.tags.map((t) =>
+            typeof t === "string" ? { key: t, name: t } : t
+          )
+        : selectedTags,
     };
     await props.onSave(meal);
   };
@@ -139,6 +209,17 @@ const MealForm: React.FC<MealFormProps> = (props) => {
           label="Servings"
           value={servings?.toString() ?? ""}
           onChange={handleServingsChange}
+        />
+        <TagPicker
+          onResolveSuggestions={filterTags}
+          getTextFromItem={(item) => item.name}
+          pickerSuggestionsProps={{
+            suggestionsHeaderText: "Available tags",
+            noResultsFoundText: "Create new tag",
+          }}
+          selectedItems={selectedTags}
+          onChange={onTagChange}
+          inputProps={{ placeholder: "Add tags..." }}
         />
       </Stack>
 

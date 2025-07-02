@@ -93,6 +93,7 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
             name: found?.name ?? "",
             servings: m.servings,
             ingredients: found?.ingredients ?? [],
+            tags: found?.tags ?? [],
           };
         })
       );
@@ -109,7 +110,6 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
       setSelectedMeals([]);
       setDayServings(Object.fromEntries(DAYS_OF_WEEK.map((day) => [day, 2])));
     }
-    // eslint-disable-next-line
   }, [mealPlan, meals, props.mealType]);
 
   // Selection for DetailsList
@@ -124,6 +124,7 @@ const MealPlanBuilder: React.FC<MealPlanBuilderProps> = (props) => {
             name: meal.name,
             servings: existing ? existing.servings : meal.servings ?? 2,
             ingredients: meal.ingredients ?? [],
+            tags: existing?.tags ?? [],
           };
         })
       );

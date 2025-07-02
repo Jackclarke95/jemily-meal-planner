@@ -28,7 +28,7 @@
     "dev:local": "react-scripts start",
     "start:local": "concurrently \"npm run dev:local\" \"npm run emulators\"",
     "start:production": "npm run dev:prod",
-    "emulators": "firebase emulators:start --only auth,database --project jemily-meal-planner",
+    "emulators": "firebase emulators:start --only auth,database --project jemily-meal-planner --import=./emulators --export-on-exit",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
