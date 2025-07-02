@@ -16,7 +16,7 @@ import EditIngredientDialog from "./EditIngredientDialog";
 import { INGREDIENT_UNIT_LOOKUP } from "../Utils/Consts/INGREDIENT_UNIT_LOOKUP";
 import { Ingredient } from "../Types/Ingredient";
 import { Meal } from "../Types/Meal";
-import { push, ref } from "firebase/database";
+import { get, push, ref } from "firebase/database";
 import { db } from "../lib/firebase";
 
 interface MealFormProps {
@@ -72,11 +72,19 @@ const MealForm: React.FC<MealFormProps> = (props) => {
 
   // Fetch tags from /meal-tags
   useEffect(() => {
-    fetch("/meal-tags")
-      .then((res) => res.json())
-      .then((tags: string[]) =>
-        setAvailableTags(tags.map((t) => ({ key: t, name: t })))
-      );
+    const mealTagsRef = ref(db, "meal-tags");
+    get(mealTagsRef).then((snapshot) => {
+      const data = snapshot.val();
+
+      // extract value for each key in data object
+      if (data) {
+        const tags = Object.keys(data).map((key) => ({
+          key,
+          name: data[key].tag,
+        }));
+        setAvailableTags(tags);
+      }
+    });
   }, []);
 
   // Helper: filter tags for picker
