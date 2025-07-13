@@ -10,48 +10,36 @@ const Home: React.FC<HomePageProps> = () => {
       <Stack tokens={{ childrenGap: 20 }}>
         <Stack horizontal style={{ gap: "2rem" }}>
           <NavCard
-            title="Manage Lunch Plans"
-            description="View weekly lunch plans"
-            path={"/lunch-plans"}
+            title="Create meal plan"
+            description="Create a new meal plan"
+            path={"/add-meal-plan"}
           />
           <NavCard
-            title="Manage Dinner Plans"
-            description="View weekly dinner plans"
-            path={"/dinner-plans"}
-          />
-        </Stack>
-        <Stack horizontal style={{ gap: "2rem" }}>
-          <NavCard
-            title="Add Lunch Plan"
-            description="Add a weekly lunch plan"
-            path={"/add-lunch-plan"}
-          />
-          <NavCard
-            title="Add Dinner Plan"
-            description="Add a weekly dinner plan"
-            path={"/add-dinner-plan"}
+            title="View meal plan"
+            description="View your current meal plans"
+            path={"/meal-plans"}
           />
         </Stack>
         <Stack horizontal style={{ gap: "2rem" }}>
           <NavCard
-            title="Add Lunch"
+            title="Add lunch"
             description="Create a new lunch time meal"
             path={"/add-lunch"}
           />
           <NavCard
-            title="Add Dinner"
+            title="Add dinner"
             description="Create a new dinner time meal"
             path={"/add-dinner"}
           />
         </Stack>
         <Stack horizontal style={{ gap: "2rem" }}>
           <NavCard
-            title="Manage Lunches"
+            title="Manage lunches"
             description="Manage lunch time meals"
             path={"/lunches"}
           />
           <NavCard
-            title="Manage Dinners"
+            title="Manage dinners"
             description="Manage dinner time meals"
             path={"/dinners"}
           />

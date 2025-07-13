@@ -6,6 +6,7 @@ import { MealType } from "../Types/MealType";
 interface MealCardProps {
   meal: Meal;
   mealType: MealType;
+  shouldNavigateOnClick?: boolean;
 }
 
 const MealCard: React.FC<MealCardProps> = (props) => {
@@ -14,13 +15,8 @@ const MealCard: React.FC<MealCardProps> = (props) => {
 
   const shouldShowTags = props.meal.tags?.length > 0;
 
-  const onMealClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
-    event.stopPropagation();
-
-    const mealType = props.mealType;
-    const path = `/edit-${mealType}/${props.meal.id}`;
-    console.log("navigating to ", path);
-    navigate(path);
+  const onMealClick = () => {
+    navigate(`/edit-${props.mealType}/${props.meal.id}`);
   };
 
   return (
@@ -33,7 +29,7 @@ const MealCard: React.FC<MealCardProps> = (props) => {
         padding: "1rem",
       }}
       tokens={{ childrenGap: 10 }}
-      onClick={onMealClick}
+      onClick={props.shouldNavigateOnClick ? onMealClick : undefined}
     >
       <Stack horizontal tokens={{ childrenGap: 10 }}>
         <Text styles={{ root: { width: "80%" } }}>{props.meal.name}</Text>

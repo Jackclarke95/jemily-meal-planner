@@ -18,13 +18,6 @@ const Meals: React.FC<MealsProps> = (props) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Handler for row click
-  const onMealClick = (item?: Meal) => {
-    if (item && item.id) {
-      navigate(`/edit-${props.mealType}/${item.id}`);
-    }
-  };
-
   useEffect(() => {
     setLoading(true);
     const mealsRef = ref(db, MEAL_PLURAL_LOOKUP[props.mealType]);
@@ -67,7 +60,12 @@ const Meals: React.FC<MealsProps> = (props) => {
         {meals.length !== 0 &&
           !loading &&
           meals.map((meal) => (
-            <MealCard meal={meal} key={meal.id} mealType={props.mealType} />
+            <MealCard
+              meal={meal}
+              key={meal.id}
+              mealType={props.mealType}
+              shouldNavigateOnClick={true}
+            />
           ))}
       </Stack>
     </Page>
