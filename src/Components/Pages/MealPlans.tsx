@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Text, Stack, Link, Spinner } from "@fluentui/react";
 import Page from "../Page";
 import { MealType } from "../../Types/MealType";
-import { MEAL_PLURAL_LOOKUP } from "../../Utils/Consts/MEAL_PLURAL_LOOKUP";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../lib/firebase";
 import { MealPlan } from "../../Types/MealPlan";
@@ -37,7 +36,7 @@ const MealPlans: React.FC<MealPlansProps> = (props) => {
   }, [props.mealType]);
 
   return (
-    <Page title={`Manage ${MEAL_PLURAL_LOOKUP[props.mealType]}`} backPath="/">
+    <Page title={`Manage ${props.mealType} plans`} backPath="/">
       <Text>Here you can manage your meal plans to suit your needs.</Text>
       {loading ? (
         <Spinner label="Loading plans..." />

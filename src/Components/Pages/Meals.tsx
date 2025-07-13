@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Stack, IColumn, PrimaryButton } from "@fluentui/react";
+import { Stack, PrimaryButton } from "@fluentui/react";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../lib/firebase";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +19,7 @@ const Meals: React.FC<MealsProps> = (props) => {
   const navigate = useNavigate();
 
   // Handler for row click
-  const onRowClick = (item?: Meal) => {
+  const onMealClick = (item?: Meal) => {
     if (item && item.id) {
       navigate(`/edit-${props.mealType}/${item.id}`);
     }
@@ -66,7 +66,9 @@ const Meals: React.FC<MealsProps> = (props) => {
         </Stack>
         {meals.length !== 0 &&
           !loading &&
-          meals.map((meal) => <MealCard meal={meal} key={meal.id} />)}
+          meals.map((meal) => (
+            <MealCard meal={meal} key={meal.id} mealType={props.mealType} />
+          ))}
       </Stack>
     </Page>
   );

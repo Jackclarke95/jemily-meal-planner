@@ -1,14 +1,27 @@
 import { getTheme, Stack, Text } from "@fluentui/react";
 import { Meal } from "../Types/Meal";
+import { useNavigate } from "react-router-dom";
+import { MealType } from "../Types/MealType";
 
 interface MealCardProps {
   meal: Meal;
+  mealType: MealType;
 }
 
 const MealCard: React.FC<MealCardProps> = (props) => {
   const theme = getTheme();
+  const navigate = useNavigate();
 
   const shouldShowTags = props.meal.tags?.length > 0;
+
+  const onMealClick = (event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    event.stopPropagation();
+
+    const mealType = props.mealType;
+    const path = `/edit-${mealType}/${props.meal.id}`;
+    console.log("navigating to ", path);
+    navigate(path);
+  };
 
   return (
     <Stack
@@ -20,10 +33,11 @@ const MealCard: React.FC<MealCardProps> = (props) => {
         padding: "1rem",
       }}
       tokens={{ childrenGap: 10 }}
+      onClick={onMealClick}
     >
       <Stack horizontal tokens={{ childrenGap: 10 }}>
-        <Text>{props.meal.name}</Text>
-        <Stack>
+        <Text styles={{ root: { width: "80%" } }}>{props.meal.name}</Text>
+        <Stack styles={{ root: { width: "20%" } }}>
           <Text>
             <b>Cal: </b>
             {props.meal.calories}
