@@ -12,8 +12,6 @@ const NavCard: React.FC<NavCardProps> = (props) => {
   const navigate = useNavigate();
 
   const onClick = () => {
-    console.log(`Navigating to ${props.path}`);
-
     navigate(props.path);
   };
 

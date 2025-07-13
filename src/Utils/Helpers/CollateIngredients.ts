@@ -12,18 +12,30 @@ export function collateIngredients(meals: Meal[]): {
     {};
 
   meals.forEach((meal) => {
-    meal.ingredients.forEach((ingredient: Ingredient) => {
+    if (!meal || !Array.isArray(meal.ingredients)) return;
+    meal.ingredients.forEach((ingredient: Ingredient | undefined) => {
+      if (
+        !ingredient ||
+        typeof ingredient.name !== "string" ||
+        typeof ingredient.unit !== "string" ||
+        ingredient.name.trim() === "" ||
+        ingredient.unit.trim() === ""
+      ) {
+        return;
+      }
       const nameKey = ingredient.name.trim().toLowerCase();
       const unitKey = ingredient.unit.trim().toLowerCase();
+      const quantity = Number(ingredient.quantity);
+      if (isNaN(quantity) || quantity === 0) return;
 
       if (!ingredientMap[nameKey]) {
         ingredientMap[nameKey] = {};
       }
 
       if (ingredientMap[nameKey][unitKey]) {
-        ingredientMap[nameKey][unitKey] += Number(ingredient.quantity);
+        ingredientMap[nameKey][unitKey] += quantity;
       } else {
-        ingredientMap[nameKey][unitKey] = Number(ingredient.quantity);
+        ingredientMap[nameKey][unitKey] = quantity;
       }
     });
   });

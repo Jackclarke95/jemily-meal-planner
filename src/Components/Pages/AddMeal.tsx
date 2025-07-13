@@ -18,8 +18,7 @@ const AddMeal: React.FC<AddMealProps> = (props) => {
   const saveMealToDb = async (meal: Omit<Meal, "id">) => {
     let key = mealKey;
     const mealData = {
-      ...meal,
-      updatedAt: new Date().toISOString(),
+      meal,
     };
     const path = MEAL_PLURAL_LOOKUP[props.mealType];
     if (!key) {
