@@ -1,24 +1,4 @@
 {
-  "dinner-plans": {
-    "-OTr8WaMd025KIbbYyjN": {
-      "meals": [
-        { "id": "-OTfsMX9eOWAb2LLXfMs", "servings": 4 },
-        { "id": "-OTfsmdmWajzoypvZTNJ", "servings": 4 },
-        { "id": "-OTiGQNpoC8fN2Rgsawi", "servings": 3 },
-        { "id": "-OTiIjq0Utv2Zm8uxQvE", "servings": 2 }
-      ],
-      "name": "Purple Week",
-      "servingsOverride": {
-        "Friday": { "dinner": 2 },
-        "Monday": { "dinner": 2 },
-        "Saturday": { "dinner": 2 },
-        "Sunday": { "dinner": 2 },
-        "Thursday": { "dinner": 2 },
-        "Tuesday": { "dinner": 1 },
-        "Wednesday": { "dinner": 2 }
-      }
-    }
-  },
   "dinners": {
     "-OTfsMX9eOWAb2LLXfMs": {
       "ingredients": [
@@ -37,7 +17,7 @@
       ],
       "name": "Plant-Based Paella with Crispy Tofu 'Chorizo'",
       "servings": 2,
-      "tags": ["Tofu", "Favourites", "Low Carb"],
+      "tags": ["Tofu", "Favourites", "Low Cal"],
       "updatedAt": "2025-07-02T07:09:14.042Z"
     },
     "-OTfsmdmWajzoypvZTNJ": {
@@ -216,12 +196,6 @@
       "updatedAt": "2025-07-02T06:15:29.722Z"
     }
   },
-  "lunch-plans": {
-    "-OTiNR0_zAyswT1Kk2sF": [
-      { "id": "-OTiGKUCvb9W1k6-3Inz", "servings": 8 },
-      { "id": "-OTiI53fOlAUb-qcArZ3", "servings": 6 }
-    ]
-  },
   "lunches": {
     "-OTiGKUCvb9W1k6-3Inz": {
       "ingredients": [
@@ -313,6 +287,6 @@
   "meal-tags": {
     "-OU8wz18lX-vr0mT_aIJ": { "tag": "Tofu" },
     "-OU8x89kWRXq2tOvUC-y": { "tag": "Favourites" },
-    "-OU8x8Zp6aBK1cmGYYft": { "tag": "Low Carb" }
+    "-OU8x8Zp6aBK1cmGYYft": { "tag": "Low Cal" }
   }
 }
